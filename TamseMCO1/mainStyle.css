@@ -1,0 +1,38 @@
+/* #dlsuBackground {
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+} */
+
+#dlsuLogo {
+  position: absolute;
+  top: 0.7vw;
+  right: 1vw;
+  height: 12vh;
+  width: 6vw;
+  z-index: 1;
+}
+
+.topBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 15vh;
+  background-color: rgba(128, 128, 128, 0.4);
+  z-index: 0;
+}
+
+#buttonContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f1ebe5;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
