@@ -12,5 +12,11 @@ loginlink.addEventListener('click', () => {
 });
 
 btnLoginpopup.addEventListener('click', () => {
-    wrapper.classList.add('action-popup');
+    if (wrapper.classList.contains('action-popup')) {
+        wrapper.classList.remove('action-popup');
+        console.log('removed action-popup');
+    } else {
+        wrapper.classList.add('action-popup'); 
+        console.log('added action-popup');
+    }
 })

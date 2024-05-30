@@ -14,28 +14,27 @@
     <header>
         <h2 class="logo">Laboratory Registration</h2>
         <nav class="navigation">
-            <a href="#">About</a>
+            <a href="about.html">About</a>
             <a href="#">Contact</a>
             <button class="btnLogin-popup">Login</button>
         </nav>
     </header>
 
-    <div class="wrapper">
-
+    <div class="wrapper action-popup">
         <div class="form-box login">
             <h2>User Login</h2>
             <form action="#">
 
                 <div class="inputbox">
                     <span class="email_icon"></span>
-                    <input type="email" required>
-                    <label for="email">Email</label>
+                    <input type="email" id="login-email" required>
+                    <label for="login-email">Email</label>
                 </div>
 
                 <div class="inputbox">
                     <span class="password_icon"></span>
-                    <input type="password" required>
-                    <label for="password">Password</label>
+                    <input type="password" id="login-password" required>
+                    <label for="login-password">Password</label>
                 </div>
 
                 <div>
@@ -58,20 +57,20 @@
 
                 <div class="inputbox">
                     <span class="user_icon"></span>
-                    <input type="text" required>
-                    <label for="username">Username</label>
+                    <input type="text" id="reg-username" required>
+                    <label for="reg-username">Username</label>
                 </div>
 
                 <div class="inputbox">
                     <span class="email_icon"></span>
-                    <input type="email" required>
-                    <label for="email">Email</label>
+                    <input type="email" id="reg-email" required>
+                    <label for="reg-email">Email</label>
                 </div>
 
                 <div class="inputbox">
                     <span class="password_icon"></span>
-                    <input type="password" required>
-                    <label for="password">Password</label>
+                    <input type="password" id="reg-password" required>
+                    <label for="reg-password">Password</label>
                 </div>
 
                 <div>
@@ -87,7 +86,6 @@
 
             </form>
         </div> <!--registerlogin div-->
-
     </div> <!--wrapper div-->
 
     <script src="loginscript.js"></script>

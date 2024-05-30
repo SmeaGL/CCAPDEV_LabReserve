@@ -96,7 +96,12 @@ header {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transition: height .2s ease;
+    transition: transform .12s ease, height .2s ease;
+    transform: scale(0);
+}
+
+.wrapper.action-popup {
+    transform: scale(1);
 }
 
 .wrapper.action {
