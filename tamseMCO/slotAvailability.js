@@ -100,7 +100,7 @@ const displayCalendar = () => {
       }
 
       const selectedLabNumber = selectedLab.val();
-      displayReservationSlots(
+      displayTimeslotReservation(
         selectedLabNumber,
         `${dateMonthObject[0].months[month]}, ${date}, ${year}`
       );
@@ -141,7 +141,20 @@ let timeSlotObject = [
   { timeSlot: "19:45 - 21:15" },
 ];
 
-let statusObject = [
+let seatNumberObject = [
+  { seatNumber: "A1" },
+  { seatNumber: "A2" },
+  { seatNumber: "A3" },
+  { seatNumber: "A4" },
+  { seatNumber: "A5" },
+  { seatNumber: "A6" },
+  { seatNumber: "A7" },
+  { seatNumber: "A8" },
+  { seatNumber: "A9" },
+  { seatNumber: "A10" },
+];
+
+let timeslotStatusObject = [
   { status: "Available", info: null },
   {
     status: "Booked",
@@ -170,35 +183,62 @@ let statusObject = [
   { status: "Available", info: null },
 ];
 
+let seatNumberStatusObject = [
+  { status: "Available", info: null },
+  {
+    status: "Booked",
+    info: {
+      bookerName: "Shawn Mark Ang",
+      bookingDate: "2024-05-30",
+      requestTime: "2024-05-29 08:00",
+    },
+    seatNumber: "A2",
+    laboratory: "Lab 2",
+  },
+  { status: "Available", info: null },
+  { status: "Available", info: null },
+  {
+    status: "Booked",
+    info: {
+      bookerName: "Aljirah Cute",
+      bookingDate: "2024-06-01",
+      requestTime: "2024-05-30 09:00",
+    },
+    seatNumber: "A5",
+    laboratory: "Lab 1",
+  },
+  { status: "Available", info: null },
+  { status: "Available", info: null },
+  { status: "Available", info: null },
+  { status: "Available", info: null },
+  { status: "Available", info: null },
+];
+
 const selectedLab = $("#selectedLab");
 
-const displayReservationSlots = (labNumber, date) => {
+const displayTimeslotReservation = (labNumber, date) => {
   const timeSlotDiv = $(".time_slot");
   timeSlotDiv.empty();
-
-  $("<h3>")
-    .html(`Laboratory: <span class="info">${labNumber}</span>`)
-    .appendTo(timeSlotDiv);
 
   $("<h3>")
     .html(`Date: <span class="info">${date}</span>`)
     .appendTo(timeSlotDiv);
 
   timeSlotObject.forEach((slot, index) => {
-    let status = statusObject[index].status;
+    let status = timeslotStatusObject[index].status;
 
     const p = $("<p>");
 
     if (status === "Available") {
       p.html(`${slot.timeSlot}  <span id="available">${status}</span>`);
     } else {
-      const bookerName = statusObject[index].info.bookerName;
-      const bookingDate = statusObject[index].info.bookingDate;
-      const requestTime = statusObject[index].info.requestTime;
+      const bookerName = timeslotStatusObject[index].info.bookerName;
+      const bookingDate = timeslotStatusObject[index].info.bookingDate;
+      const requestTime = timeslotStatusObject[index].info.requestTime;
       p.html(`${slot.timeSlot}  <span id="booked">${status}</span>`);
       p.on("click", function () {
         displayBookingInfo(
-          statusObject[index],
+          timeslotStatusObject[index],
           bookerName,
           bookingDate,
           requestTime
@@ -210,16 +250,59 @@ const displayReservationSlots = (labNumber, date) => {
   });
 };
 
+const displaySeatNumberReservation = (labNumber, date) => {
+  const seatNumberDiv = $(".seat_number");
+  seatNumberDiv.empty();
+
+  $("<h3>")
+    .html(`Laboratory: <span class="info">${labNumber}</span>`)
+    .appendTo(seatNumberDiv);
+
+  seatNumberObject.forEach((seat, index) => {
+    let status = seatNumberStatusObject[index].status;
+
+    const p = $("<p>");
+
+    if (status === "Available") {
+      p.html(`${seat.seatNumber}  <span id="available">${status}</span>`);
+    } else {
+      const bookerName = seatNumberStatusObject[index].info.bookerName;
+      const bookingDate = seatNumberStatusObject[index].info.bookingDate;
+      const requestTime = seatNumberStatusObject[index].info.requestTime;
+      p.html(`${seat.seatNumber}  <span id="booked">${status}</span>`);
+      p.on("click", function () {
+        displayBookingInfo(
+          seatNumberStatusObject[index],
+          bookerName,
+          bookingDate,
+          requestTime
+        );
+      });
+    }
+
+    seatNumberDiv.append(p);
+  });
+};
+
 // Event listener for changes in the selected lab
 selectedLab.on("change", function () {
-  displayReservationSlots(
+  displayTimeslotReservation(
+    selectedLab.val(),
+    `${dateMonthObject[0].months[month]}, ${date}, ${year}`
+  );
+  displaySeatNumberReservation(
     selectedLab.val(),
     `${dateMonthObject[0].months[month]}, ${date}, ${year}`
   );
 });
 
 // Initial display
-displayReservationSlots(
+displayTimeslotReservation(
+  selectedLab.val(),
+  `${dateMonthObject[0].months[month]}, ${date}, ${year}`
+);
+
+displaySeatNumberReservation(
   selectedLab.val(),
   `${dateMonthObject[0].months[month]}, ${date}, ${year}`
 );

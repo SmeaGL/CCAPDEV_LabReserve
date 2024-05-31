@@ -125,9 +125,9 @@ body {
 
 /* Reservation Codes */
 
-.reservation_container {
+.timeslot_container,
+.seatnumber_container {
   background-color: rgb(50, 50, 50);
-  color: white;
   border-radius: 5px;
   max-width: 450px;
   width: 300px;
@@ -136,24 +136,39 @@ body {
   margin-left: 50px;
 }
 
-.reservation {
-  padding: 3rem;
+.seatnumber_container {
+  background-color: rgb(50, 50, 50);
+  border-radius: 5px;
+  max-width: 450px;
+  width: 240px;
+  box-shadow: 5px 5px 10px black;
+  height: 400px;
+  margin-left: 50px;
 }
 
-.reservation h3 {
+.timeslot_reservation,
+.seatnumber_reservation {
+  padding: 3rem;
+  color: white;
+}
+
+.timeslot_reservation h3,
+.seatnumber_reservation h3 {
   font-size: 16px;
   margin-top: 3px;
   margin-bottom: 3px;
 }
 
-.reservation p {
+.timeslot_reservation p,
+.seatnumber_reservation p {
   font-style: italic;
   font-size: 15px;
   margin-top: 12px;
   margin-bottom: 12px;
 }
 
-.info {
+.timeslot_reservation .info,
+.seatnumber_reservation .info {
   font-style: italic;
   color: rgb(19, 149, 255);
   font-size: 16px;
@@ -182,10 +197,11 @@ body {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.2);
+  color: white;
 }
 .overlay {
   background-color: rgb(50, 50, 50);
-  margin: 360px auto;
+  margin: 255px auto;
   border: 1px solid #000000;
   width: 350px;
   height: 450px;
