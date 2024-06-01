@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="loginstyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="loginscript.js"></script>
 </head>
 
 <body>
@@ -26,15 +28,20 @@
             <form action="#">
 
                 <div class="inputbox">
-                    <span class="email_icon"></span>
+                    <span class="email-icon"></span>
                     <input type="email" id="login-email" required>
                     <label for="login-email">Email</label>
                 </div>
 
                 <div class="inputbox">
-                    <span class="password_icon"></span>
+                    <span class="password-icon"></span>
                     <input type="password" id="login-password" required>
                     <label for="login-password">Password</label>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember Me</label>
                 </div>
 
                 <div>
@@ -56,25 +63,34 @@
             <form action="#">
 
                 <div class="inputbox">
-                    <span class="user_icon"></span>
+                    <span class="user-icon"></span>
                     <input type="text" id="reg-username" required>
                     <label for="reg-username">Username</label>
                 </div>
 
                 <div class="inputbox">
-                    <span class="email_icon"></span>
+                    <span class="email-icon"></span>
                     <input type="email" id="reg-email" required>
                     <label for="reg-email">Email</label>
                 </div>
 
                 <div class="inputbox">
-                    <span class="password_icon"></span>
+                    <span class="password-icon"></span>
                     <input type="password" id="reg-password" required>
                     <label for="reg-password">Password</label>
                 </div>
 
+                <div class="inputbox">
+                    <span class="usertype-icon"></span>
+                    <select id="user-type" required>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                    </select>
+                    <label for="user-type">User Type</label>
+                </div>
+
                 <div>
-                    <button type="submit" class="login-submit">Register</button>
+                    <button type="submit" class="register-submit">Register</button>
                 </div>
 
                 <div class="login">
@@ -88,7 +104,6 @@
         </div> <!--registerlogin div-->
     </div> <!--wrapper div-->
 
-    <script src="loginscript.js"></script>
 </body>
 
 </html>

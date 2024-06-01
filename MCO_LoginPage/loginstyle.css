@@ -105,7 +105,8 @@ header {
 }
 
 .wrapper.action {
-    height: 520px;
+    height: 550px;
+    top: 50px;
 }
 
 .wrapper .form-box {
@@ -169,7 +170,19 @@ header {
     padding: 0 35px 0 5px;
 }
 
-.inputbox .email_icon {
+.inputbox select {
+    width: 90%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+    transform: translateX(-20px);
+}
+
+.inputbox .email-icon {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -182,7 +195,7 @@ header {
     right: 8px;
 }
 
-.inputbox .password_icon {
+.inputbox .password-icon {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -195,7 +208,7 @@ header {
     right: 8px;
 }
 
-.inputbox .user_icon {
+.inputbox .user-icon {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -208,7 +221,45 @@ header {
     right: 8px;
 }
 
+.inputbox .usertype-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('images/usertype.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 15px;
+    right: 8px;
+}
+
+.remember-me {
+    font-size: .9em;
+    font-weight: 500;
+    margin: -15px 0 15px;
+    display: flex;
+}
+
+.remember-me label {
+    margin-left: 5px;
+}
+
 .login-submit {
+    width: 100%;
+    height: 40px;
+    background: rgba(10, 0, 0);
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: .5s;
+}
+
+.register-submit {
     width: 100%;
     height: 40px;
     background: rgba(10, 0, 0);
@@ -229,12 +280,12 @@ header {
     text-align: center;
 }
 
-.register .reg_link {
+.reg-link {
     color: rgb(238, 228, 228);
     text-decoration: none;
 }
 
-.register .reg_link:hover {
+.reg-link:hover {
     text-decoration: underline;
 }
 
