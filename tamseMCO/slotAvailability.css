@@ -125,8 +125,7 @@ body {
 
 /* Reservation Codes */
 
-.timeslot_container,
-.seatnumber_container {
+.timeslot_container {
   background-color: rgb(50, 50, 50);
   border-radius: 5px;
   max-width: 450px;

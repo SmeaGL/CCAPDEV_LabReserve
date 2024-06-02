@@ -38,10 +38,9 @@ let dayName = dateMonthObject[0].days[dateObject.getDay()];
 let month = dateObject.getMonth();
 let year = dateObject.getFullYear();
 let date = dateObject.getDate();
+const defaultDate = `${dateMonthObject[0].months[month]}, ${date}, ${year}`;
 
-datetextElements.html(
-  `${dateMonthObject[0].months[month]}, ${date}, ${year} (${dayName})`
-);
+datetextElements.html(defaultDate);
 
 const displayCalendar = () => {
   let firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -85,9 +84,7 @@ const displayCalendar = () => {
 
       date = parseInt($(this).text());
       dayName = dateMonthObject[0].days[new Date(year, month, date).getDay()];
-      datetextElements.html(
-        `${dateMonthObject[0].months[month]}, ${date}, ${year} (${dayName})`
-      );
+      datetextElements.html(defaultDate);
 
       if (
         date === dateObject.getDate() &&
@@ -215,10 +212,16 @@ let seatNumberStatusObject = [
 ];
 
 const selectedLab = $("#selectedLab");
+let selectedTimeslot = null;
 
+// Capture timeslot when a user clicks on it and display seat number reservation
 const displayTimeslotReservation = (labNumber, date) => {
   const timeSlotDiv = $(".time_slot");
   timeSlotDiv.empty();
+
+  $("<h3>")
+    .html(`Laboratory Number: <span class="info">${labNumber}</span>`)
+    .appendTo(timeSlotDiv);
 
   $("<h3>")
     .html(`Date: <span class="info">${date}</span>`)
@@ -246,16 +249,21 @@ const displayTimeslotReservation = (labNumber, date) => {
       });
     }
 
+    p.on("click", function () {
+      selectedTimeslot = slot.timeSlot;
+      displaySeatNumberReservation(selectedTimeslot, date);
+    });
+
     timeSlotDiv.append(p);
   });
 };
 
-const displaySeatNumberReservation = (labNumber, date) => {
+const displaySeatNumberReservation = (timeslot, date) => {
   const seatNumberDiv = $(".seat_number");
   seatNumberDiv.empty();
 
   $("<h3>")
-    .html(`Laboratory: <span class="info">${labNumber}</span>`)
+    .html(`Time Slot: <span class="info">${timeslot}</span>`)
     .appendTo(seatNumberDiv);
 
   seatNumberObject.forEach((seat, index) => {
@@ -286,26 +294,19 @@ const displaySeatNumberReservation = (labNumber, date) => {
 
 // Event listener for changes in the selected lab
 selectedLab.on("change", function () {
-  displayTimeslotReservation(
-    selectedLab.val(),
-    `${dateMonthObject[0].months[month]}, ${date}, ${year}`
-  );
-  displaySeatNumberReservation(
-    selectedLab.val(),
-    `${dateMonthObject[0].months[month]}, ${date}, ${year}`
-  );
+  displayTimeslotReservation(selectedLab.val(), defaultDate);
+  displaySeatNumberReservation(selectedLab.val(), defaultDate);
 });
 
 // Initial display
-displayTimeslotReservation(
-  selectedLab.val(),
-  `${dateMonthObject[0].months[month]}, ${date}, ${year}`
-);
+displayTimeslotReservation(selectedLab.val(), defaultDate);
 
-displaySeatNumberReservation(
-  selectedLab.val(),
-  `${dateMonthObject[0].months[month]}, ${date}, ${year}`
-);
+// Get the default timeslot string
+const defaultTimeslot = timeSlotObject.find(
+  (slot) => slot.timeSlot === "07:30 - 09:00"
+).timeSlot;
+
+displaySeatNumberReservation(defaultTimeslot, defaultDate);
 
 // Booking Information
 function displayBookingInfo(slot, bookerName, bookingDate, requestTime) {
