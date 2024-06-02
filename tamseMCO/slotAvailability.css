@@ -129,7 +129,7 @@ body {
   background-color: rgb(50, 50, 50);
   border-radius: 5px;
   max-width: 450px;
-  width: 300px;
+  width: 310px;
   box-shadow: 5px 5px 10px black;
   height: 400px;
   margin-left: 50px;
@@ -139,7 +139,7 @@ body {
   background-color: rgb(50, 50, 50);
   border-radius: 5px;
   max-width: 450px;
-  width: 240px;
+  width: 265px;
   box-shadow: 5px 5px 10px black;
   height: 400px;
   margin-left: 50px;
@@ -147,7 +147,7 @@ body {
 
 .timeslot_reservation,
 .seatnumber_reservation {
-  padding: 3rem;
+  padding: 2.7rem;
   color: white;
 }
 
@@ -174,16 +174,32 @@ body {
   text-align: right;
 }
 
+#slotsLeft {
+  color: rgb(96, 255, 96);
+  cursor: pointer;
+  margin-left: 42px;
+  text-decoration: underline;
+}
+
+#fullyBooked {
+  color: rgb(255, 0, 43);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 42px;
+}
+
 #available {
   color: rgb(96, 255, 96);
-  margin-left: 42px;
+  margin-left: 60px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 #booked {
   color: rgb(255, 0, 43);
   cursor: pointer;
   text-decoration: underline;
-  margin-left: 42px;
+  margin-left: 60px;
 }
 
 .wholeOverlay {
@@ -205,6 +221,7 @@ body {
   width: 350px;
   height: 450px;
   border-radius: 10px;
+  padding-left: 15px;
 }
 
 .close {
@@ -250,4 +267,26 @@ body {
 .bookingLine {
   display: block;
   margin-top: 10px;
+}
+
+#confirmButton,
+#cancelButton {
+  background-color: rgb(96, 255, 96);
+  color: white;
+  padding: 10px 10px;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+#cancelButton {
+  background-color: rgb(255, 0, 43);
+}
+
+#confirmButton:hover,
+#cancelButton:hover {
+  opacity: 0.8;
 }

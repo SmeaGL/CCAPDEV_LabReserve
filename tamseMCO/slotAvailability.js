@@ -99,7 +99,8 @@ const displayCalendar = () => {
       const selectedLabNumber = selectedLab.val();
       displayTimeslotReservation(
         selectedLabNumber,
-        `${dateMonthObject[0].months[month]}, ${date}, ${year}`
+        `${dateMonthObject[0].months[month]}, ${date}, ${year}`,
+        timeslotStatusObject
       );
     });
 };
@@ -138,84 +139,124 @@ let timeSlotObject = [
   { timeSlot: "19:45 - 21:15" },
 ];
 
-let seatNumberObject = [
-  { seatNumber: "A1" },
-  { seatNumber: "A2" },
-  { seatNumber: "A3" },
-  { seatNumber: "A4" },
-  { seatNumber: "A5" },
-  { seatNumber: "A6" },
-  { seatNumber: "A7" },
-  { seatNumber: "A8" },
-  { seatNumber: "A9" },
-  { seatNumber: "A10" },
-];
-
 let timeslotStatusObject = [
-  { status: "Available", info: null },
+  {
+    status: "Available",
+    slotsLeft: 0,
+    timeSlot: "07:30 - 09:15",
+    info: null,
+  },
   {
     status: "Booked",
-    info: {
-      bookerName: "Shawn Mark Ang",
-      bookingDate: "2024-05-30",
-      requestTime: "2024-05-29 08:00",
-    },
-    seatNumber: "A2",
-    laboratory: "Lab 2",
+    slotsLeft: 8,
+    timeSlot: "09:15 - 11:00",
+    info: null,
   },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
+  {
+    status: "Available",
+    slotsLeft: 10,
+    timeSlot: "11:00 - 12:45",
+    info: null,
+  },
+  {
+    status: "Available",
+    slotsLeft: 10,
+    timeSlot: "12:45 - 14:30",
+    info: null,
+  },
   {
     status: "Booked",
-    info: {
-      bookerName: "Aljirah Cute",
-      bookingDate: "2024-06-01",
-      requestTime: "2024-05-30 09:00",
-    },
-    seatNumber: "A5",
-    laboratory: "Lab 1",
+    slotsLeft: 8,
+    timeSlot: "14:30 - 16:15",
+    info: null,
   },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
+  {
+    status: "Available",
+    slotsLeft: 10,
+    timeSlot: "16:15 - 18:00",
+    info: null,
+  },
+  {
+    status: "Available",
+    slotsLeft: 10,
+    timeSlot: "18:00 - 19:45",
+    info: null,
+  },
+  {
+    status: "Available",
+    slotsLeft: 10,
+    timeSlot: "19:45 - 21:15",
+    info: null,
+  },
 ];
 
-let seatNumberStatusObject = [
-  { status: "Available", info: null },
+let seatNumberObject = [
   {
+    seatNumber: "A1",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A2",
     status: "Booked",
     info: {
       bookerName: "Shawn Mark Ang",
       bookingDate: "2024-05-30",
       requestTime: "2024-05-29 08:00",
     },
-    seatNumber: "A2",
-    laboratory: "Lab 2",
+    laboratory: "G301",
   },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
   {
+    seatNumber: "A3",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A4",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A5",
     status: "Booked",
     info: {
       bookerName: "Aljirah Cute",
       bookingDate: "2024-06-01",
       requestTime: "2024-05-30 09:00",
     },
-    seatNumber: "A5",
-    laboratory: "Lab 1",
+    laboratory: "G301",
   },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
-  { status: "Available", info: null },
+  {
+    seatNumber: "A6",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A7",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A8",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A9",
+    status: "Available",
+    info: null,
+  },
+  {
+    seatNumber: "A10",
+    status: "Available",
+    info: null,
+  },
 ];
 
 const selectedLab = $("#selectedLab");
 let selectedTimeslot = null;
 
-// Capture timeslot when a user clicks on it and display seat number reservation
-const displayTimeslotReservation = (labNumber, date) => {
+const displayTimeslotReservation = (labNumber, date, timeslotStatusObject) => {
   const timeSlotDiv = $(".time_slot");
   timeSlotDiv.empty();
 
@@ -227,26 +268,15 @@ const displayTimeslotReservation = (labNumber, date) => {
     .html(`Date: <span class="info">${date}</span>`)
     .appendTo(timeSlotDiv);
 
-  timeSlotObject.forEach((slot, index) => {
-    let status = timeslotStatusObject[index].status;
-
+  timeslotStatusObject.forEach((slot) => {
     const p = $("<p>");
 
-    if (status === "Available") {
-      p.html(`${slot.timeSlot}  <span id="available">${status}</span>`);
+    if (slot.slotsLeft > 0) {
+      p.html(
+        `${slot.timeSlot} <span id="slotsLeft">${slot.slotsLeft} slots left</span>`
+      );
     } else {
-      const bookerName = timeslotStatusObject[index].info.bookerName;
-      const bookingDate = timeslotStatusObject[index].info.bookingDate;
-      const requestTime = timeslotStatusObject[index].info.requestTime;
-      p.html(`${slot.timeSlot}  <span id="booked">${status}</span>`);
-      p.on("click", function () {
-        displayBookingInfo(
-          timeslotStatusObject[index],
-          bookerName,
-          bookingDate,
-          requestTime
-        );
-      });
+      p.html(`${slot.timeSlot} <span id="fullyBooked">Fully Booked</span>`);
     }
 
     p.on("click", function () {
@@ -266,25 +296,22 @@ const displaySeatNumberReservation = (timeslot, date) => {
     .html(`Time Slot: <span class="info">${timeslot}</span>`)
     .appendTo(seatNumberDiv);
 
-  seatNumberObject.forEach((seat, index) => {
-    let status = seatNumberStatusObject[index].status;
+  seatNumberObject.forEach((seat) => {
+    let status = seat.status;
 
     const p = $("<p>");
 
     if (status === "Available") {
       p.html(`${seat.seatNumber}  <span id="available">${status}</span>`);
+      p.on("click", function () {
+        const labNumber = selectedLab.val();
+        confirmBooking(timeslot, seat, labNumber);
+      });
     } else {
-      const bookerName = seatNumberStatusObject[index].info.bookerName;
-      const bookingDate = seatNumberStatusObject[index].info.bookingDate;
-      const requestTime = seatNumberStatusObject[index].info.requestTime;
+      const { bookerName, bookingDate, requestTime } = seat.info;
       p.html(`${seat.seatNumber}  <span id="booked">${status}</span>`);
       p.on("click", function () {
-        displayBookingInfo(
-          seatNumberStatusObject[index],
-          bookerName,
-          bookingDate,
-          requestTime
-        );
+        displayBookingInfo(seat, bookerName, bookingDate, requestTime);
       });
     }
 
@@ -292,14 +319,63 @@ const displaySeatNumberReservation = (timeslot, date) => {
   });
 };
 
+function confirmBooking(timeslot, seat, labNumber) {
+  const bookerName = "Your Name"; // Replace with the actual booker's name if needed
+  const bookingDate = new Date().toLocaleDateString();
+  const requestTime = new Date().toLocaleTimeString();
+
+  const overlay = $("#myOverlay");
+  const bookingInfo = $("#bookingInfo");
+  bookingInfo.html(`
+   <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
+    <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
+    <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
+    <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
+    <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
+    <button id="cancelButton">Cancel</button>
+    <button id="confirmButton">Confirm Booking</button>
+  `);
+
+  overlay.show();
+
+  $("#confirmButton").on("click", function () {
+    overlay.hide();
+    alert("Booking confirmed!");
+  });
+
+  $("#cancelButton").on("click", function () {
+    overlay.hide();
+  });
+}
+
+function displayBookingInfo(slot, bookerName, bookingDate, requestTime) {
+  const overlay = $("#myOverlay");
+  const bookingInfo = $("#bookingInfo");
+  bookingInfo.html(`
+    <span class="bookingLine">Booker : <span class="bookingInfoValue">${bookerName}</span></span><br>
+    <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${slot.seatNumber}</span></span><br>
+    <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${slot.laboratory}</span></span><br>
+    <span class="bookingLine">Request Time : <span class="bookingInfoValue">${requestTime}</span></span><br>
+    <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span>
+  `);
+  overlay.show();
+}
+
 // Event listener for changes in the selected lab
 selectedLab.on("change", function () {
-  displayTimeslotReservation(selectedLab.val(), defaultDate);
-  displaySeatNumberReservation(selectedLab.val(), defaultDate);
+  displayTimeslotReservation(
+    selectedLab.val(),
+    defaultDate,
+    timeslotStatusObject
+  );
 });
 
 // Initial display
-displayTimeslotReservation(selectedLab.val(), defaultDate);
+displayTimeslotReservation(
+  selectedLab.val(),
+  defaultDate,
+  timeslotStatusObject
+);
 
 // Get the default timeslot string
 const defaultTimeslot = timeSlotObject.find(
@@ -307,20 +383,6 @@ const defaultTimeslot = timeSlotObject.find(
 ).timeSlot;
 
 displaySeatNumberReservation(defaultTimeslot, defaultDate);
-
-// Booking Information
-function displayBookingInfo(slot, bookerName, bookingDate, requestTime) {
-  const overlay = $("#myOverlay");
-  const bookingInfo = $("#bookingInfo");
-  bookingInfo.html(`
-      <span class="bookingLine">Booker : <span class="bookingInfoValue">${bookerName}</span></span><br>
-      <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${slot.seatNumber}</span></span><br>
-      <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${slot.laboratory}</span></span><br>
-      <span class="bookingLine">Request Time : <span class="bookingInfoValue">${requestTime}</span></span><br>
-      <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span>
-    `);
-  overlay.show();
-}
 
 const overlay = $("#myOverlay");
 const span = $(".close");
