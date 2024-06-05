@@ -52,6 +52,7 @@ const $loginSubmit = $('.login-submit');
 $loginSubmit.on('click', function() {
     const email = $('#login-email').val();
     const password = $('#login-password').val();
+    const rememberMe = $('#remember-me').is(':checked');
     let userFound = false;
 
     // Checks for correct login info
@@ -59,11 +60,24 @@ $loginSubmit.on('click', function() {
         if (users[i].email === email && users[i].password === password) {
         userFound = true;
         curUser = users[i];
-        console.log(curUser);
+        
+        // Save login info if remember me is checked
+        if(rememberMe) {
+            localStorage.setItem('login-email', email);
+            localStorage.setItem('login-password', password);
+        }
+        else {
+            localStorage.removeItem('login-email');
+            localStorage.removeItem('login-password');
+        }
+
         setTimeout(() => {
             window.location.href = "slotAvailability.html"; // Redirect to slot availability page
             alert("Login successful");
         }, 100);
+        
+        // to check if the user is properly logged in
+        console.log(curUser);
         break;
         }
     }
@@ -73,6 +87,9 @@ $loginSubmit.on('click', function() {
         alert('Invalid username or password');
     }
 });
+
+
+
 
 /**for css html functions*/
 const $wrapper = $('.wrapper');
