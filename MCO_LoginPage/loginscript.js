@@ -26,16 +26,17 @@ $registerSubmit.on('click', function() {
     const usertype = $('#user-type').val();
 
     // Checks for duplicate username or email
-    for(let i = 0; i < users.length; i++) {
-        if(users[i].username === username) {
-            alert('Username already exists');
-            return;
-        }
-        if(users[i].email === email) {
-            alert('Email already in use');
-            return;
-        }
+    const isDuplicateName = users.some(user => user.username === username);
+    if(isDuplicateName) {
+        alert('Username already exists');
+        return;
     }
+    const isDuplicateEmail = users.some(user => user.email === email);
+    if(isDuplicateEmail) {
+        alert('Email already in use');
+        return;
+    }
+    
     // Creates a new user
     const newUser = new Person(username, email, password, usertype);
     if(users.push(newUser)) {
@@ -54,18 +55,16 @@ $loginSubmit.on('click', function() {
     let userFound = false;
 
     // Checks for correct login info
-    for(let i = 0; i < users.length; i++) {
-        if(users[i].email === email && users[i].password === password) {
-            userFound = true;
-            curUser = users[i];
-            window.location.href = 'About.html'; // Redirect to slot availability page
-            console.log(curUser);
-            
-            // Delays alert to allow redirection
-            setTimeout(() => { 
-                alert('Login successful');
-            }, 100);
-            break;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].email === email && users[i].password === password) {
+        userFound = true;
+        curUser = users[i];
+        console.log(curUser);
+        setTimeout(() => {
+            window.location.href = "slotAvailability.html"; // Redirect to slot availability page
+            alert("Login successful");
+        }, 100);
+        break;
         }
     }
     // If user not found
