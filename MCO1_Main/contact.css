@@ -83,12 +83,12 @@ header {
 }
 
 .contact_container {
-  max-width: 450px;
-  width: 330px;
+  width: 520px;
+
   background-color: rgb(50, 50, 50, 0.92);
   border-radius: 5px;
   box-shadow: 5px 5px 10px black;
-  height: 480px;
+  height: 350px;
   margin-left: 50px;
 }
 
@@ -98,22 +98,17 @@ header {
 }
 
 .contact h3 {
+  color: rgb(19, 149, 255);
+  font-style: italic;
   font-size: 16px;
   margin-top: 3px;
   margin-bottom: 3px;
+  text-align: center;
 }
 
 .contact p {
-  font-style: italic;
+  color: white;
   font-size: 15px;
-  margin-top: 12px;
-  margin-bottom: 12px;
-}
-
-.contact,
-.seatnumber_reservation .info {
-  font-style: italic;
-  color: rgb(19, 149, 255);
-  font-size: 16px;
-  text-align: right;
+  margin-top: 25px;
+  text-align: center;
 }
