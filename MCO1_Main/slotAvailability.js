@@ -329,6 +329,8 @@ function initializeCalendarAndReservations() {
       .html(`Time Slot: <span class="info">${timeslot}</span>`)
       .appendTo(seatNumberDiv);
 
+    $("<h3>").html(`Seat Number <span class="info">`).appendTo(seatNumberDiv);;
+
     seatNumberObject.forEach((seat) => {
       let status = seat.status;
 

@@ -1,3 +1,9 @@
+.logo {
+  font-size: 2em;
+  color: #fff;
+  user-select: none;
+}
+
 .container {
   position: relative;
   width: 70%;
@@ -6,11 +12,6 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-h2 {
-  margin-top: 1em;
-  text-align: center;
 }
 
 .user-profile {

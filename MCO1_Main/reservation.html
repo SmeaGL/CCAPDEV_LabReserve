@@ -5,27 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lab Room Reservation System</title>
     <link rel="stylesheet" href="reservation.css" />
+    <link rel="stylesheet" href="commonStyle.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
   </head>
   <body>
-    <div class="container">
-      <h1>Lab Room Reservation System</h1>
-      <div class="form-container">
-        <form id="roomForm">
-          <input type="hidden" id="roomId" />
-          <label for="roomName">Room Name:</label>
-          <input type="text" id="roomName" required />
-          <label for="timeSlot">Time Slot:</label>
-          <input type="text" id="timeSlot" required />
-          <label for="studentName">Student Name:</label>
-          <input type="text" id="studentName" required />
-          <button type="submit">Save Room</button>
-        </form>
+      <header>
+          <h1 class="logo">Admin Reserve Slot</h1>
+          <nav class="navigation">
+            <!-- <a href="contact.html">Contact</a> -->
+            <a href="profile.html" class="icon-link">
+              <i class="fas fa-user" style="font-size: 29px"></i>
+            </a>
+            <button class="btnLogin-popup" onclick="window.location.href='login.html'">Logout</button>
+      </header>
+
+      <div class="container">
+        <div class="form-container">
+          <form id="roomForm">
+            <input type="hidden" id="roomId" />
+            <label for="roomName">Room Name:</label>
+            <input type="text" id="roomName" required />
+            <label for="timeSlot">Time Slot:</label>
+            <input type="text" id="timeSlot" required />
+            <label for="studentName">Student Name:</label>
+            <input type="text" id="studentName" required />
+            <button type="submit">Save Room</button>
+          </form>
+        </div>
+        <div class="room-list">
+          <h2>Room List</h2>
+          <ul id="roomList"></ul>
+        </div>
       </div>
-      <div class="room-list">
-        <h2>Room List</h2>
-        <ul id="roomList"></ul>
-      </div>
-    </div>
+
     <script src="reservation.js"></script>
   </body>
 </html>
