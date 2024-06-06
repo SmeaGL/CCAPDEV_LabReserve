@@ -110,6 +110,7 @@ th {
 }
 
 .page {
+  margin-top: 80px;
   display: inline-block;
   position: relative;
   width: 100%;

@@ -9,21 +9,21 @@ $(document).ready(function () {
     }
   }
   const user1 = new Person(
-    "alice",
-    "alice@example.com",
+    "Shawn",
+    "shawn@example.com",
     "password1",
     "student"
   );
-  const user2 = new Person("bob", "bob@example.com", "password2", "faculty");
-  const user3 = new Person(
-    "charlie",
-    "charlie@example.com",
-    "password3",
-    "student"
+  const user2 = new Person(
+    "Aljirah",
+    "aljirah@example.com",
+    "password2",
+    "faculty"
   );
+  const user3 = new Person("Mark", "mark@example.com", "password3", "student");
   const user4 = new Person(
-    "david",
-    "david@example.com",
+    "Andrei",
+    "andrei@example.com",
     "password4",
     "faculty"
   );
@@ -87,7 +87,7 @@ $(document).ready(function () {
         }
 
         setTimeout(() => {
-          window.location.href = "homePage.html"; // Redirect to Home page
+          window.location.href = "slotAvailability.html"; // Redirect to Home page
           alert("Login successful");
         }, 100);
 

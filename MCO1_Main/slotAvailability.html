@@ -3,27 +3,28 @@
   <head>
     <link rel="stylesheet" type="text/css" href="commonStyle.css" />
     <link rel="stylesheet" type="text/css" href="slotAvailability.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="slotAvailability.js" defer></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="slotAvailability.js"></script>
     <title>Slot Availability</title>
   </head>
   <body>
+    <div id="welcome-message">
+      <p>Welcome!</p>
+    </div>
     <header>
       <h2 class="logo">Reserve Slot</h2>
       <nav class="navigation">
-        <a href="about.html">About</a>
-        <a href="#">Contact</a>
+        <a href="contact.html">Contact</a>
+        <a href="profile.html" class="icon-link">
+          <i class="fas fa-user" style="font-size: 29px"></i>
+        </a>
         <button class="btnLogin-popup">Logout</button>
-        <a href="profile.html" class="icon-link"
-          ><i class="fas fa-user" style="font-size: 29px"></i
-        ></a>
       </nav>
     </header>
-
     <div class="calendar">
       <div class="calendar_inner">
         <div class="calendar_arrows">
@@ -33,7 +34,7 @@
             <i class="fas fa-arrow-right" id="next"></i>
           </div>
           <div id="selectLabContainer">
-            <p class="selectLab_text">Select Labaratory:</p>
+            <p class="selectLab_text">Select Laboratory:</p>
             <select id="selectedLab">
               <option value="G301">Gokongwei 301</option>
               <option value="G302">Gokongwei 302</option>
