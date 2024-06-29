@@ -87,7 +87,7 @@ $(document).ready(function () {
         }
 
         setTimeout(() => {
-          window.location.href = "slotAvailability.html"; // Redirect to Home page
+          window.location.href = "reserveSlot.html"; // Redirect to Home page
           alert("Login successful");
         }, 100);
 
