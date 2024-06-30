@@ -86,11 +86,13 @@ $(document).ready(function () {
           localStorage.removeItem("login-password");
         }
 
-        setTimeout(() => {
-          window.location.href = "reserveSlot.html"; // Redirect to Home page
-          alert("Login successful");
-        }, 100);
+        $(".wrapper.action-popup").hide();
+        $("#welcome-message, header").show();
 
+        setTimeout(() => {
+          $("#welcome-message, header").hide();
+          window.location.href = "reserveSlot.html";
+        }, 2500);
         // to check if the user is properly logged in
         console.log(curUser);
         break;
