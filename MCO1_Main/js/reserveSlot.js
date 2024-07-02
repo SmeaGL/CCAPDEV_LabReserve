@@ -291,7 +291,7 @@ function initializeCalendarAndReservations() {
       .appendTo(timeSlotDiv);
 
     timeslotStatusObject.forEach((slot) => {
-      const p = $("<p>");
+      const p = $("<div>").addClass("timeslot-container");
 
       if (slot.slotsLeft > 0) {
         p.html(
@@ -323,10 +323,14 @@ function initializeCalendarAndReservations() {
     seatNumberObject.forEach((seat) => {
       let status = seat.status;
 
-      const seatInfo = $("<p>").html(`${seat.seatNumber}`);
+      const seatContainer = $("<div>").addClass("seat-container");
 
-      const statusButton = $("<button>");
-      statusButton.html(status); // Set the button text to the availability status
+      const seatInfo = $("<p>")
+        .html(`${seat.seatNumber}`)
+        .addClass("seat-info");
+      seatContainer.append(seatInfo); // Append seatInfo to seatContainer
+
+      const statusButton = $("<button>").html(status).addClass("status-button");
 
       if (status === "Available") {
         statusButton.addClass("available");
@@ -342,9 +346,8 @@ function initializeCalendarAndReservations() {
         });
       }
 
-      const seatContainer = $("<div>").addClass("seat_container");
-      seatContainer.append(seatInfo, statusButton);
-      seatNumberDiv.append(seatContainer);
+      seatContainer.append(statusButton); // Append statusButton to seatContainer
+      seatNumberDiv.append(seatContainer); // Append seatContainer to seatNumberDiv
     });
   };
 

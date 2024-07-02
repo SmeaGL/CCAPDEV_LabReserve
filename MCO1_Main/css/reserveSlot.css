@@ -178,19 +178,42 @@
   background-color: rgb(50, 50, 50, 0.92);
   border-radius: 5px;
   box-shadow: 5px 5px 10px black;
-  height: 480px;
+  height: 525px;
   margin-left: 50px;
 }
 
 .timeslot_container {
-  max-width: 450px;
-  width: 330px;
+  width: 350px;
+}
+
+.timeslot-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 21px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .seatnumber_container {
-  max-width: 450px;
   width: 290px;
+}
+
+.seat-container {
+  margin-bottom: -8px;
+  white-space: nowrap;
   display: flex;
+  align-items: center;
+}
+
+.seat-info {
+  display: inline-block;
+  margin-right: 10px;
+  font-weight: 300;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timeslot_reservation,
@@ -222,10 +245,19 @@
   text-align: right;
 }
 
+#slotsLeft,
+#fullyBooked {
+  flex-shrink: 0;
+  width: 150px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #slotsLeft {
   color: rgb(96, 255, 96);
   cursor: pointer;
-  margin-left: 42px;
   text-decoration: underline;
 }
 
@@ -233,15 +265,21 @@
   color: rgb(255, 0, 43);
   cursor: pointer;
   text-decoration: underline;
-  margin-left: 42px;
 }
 .available,
 .booked {
-  width: 90px;
-  height: 30px;
   color: black;
   border: none;
   border-radius: 4px;
+  cursor: pointer;
+  width: 90px;
+  height: 30px;
+  display: inline-block;
+  margin-left: 10px;
+  text-align: center;
+  line-height: 30px;
+  font-weight: 300;
+  transition: 0.3s;
   cursor: pointer;
 }
 
@@ -251,6 +289,11 @@
 
 .booked {
   background-color: rgb(255, 0, 43);
+}
+
+.available:hover,
+.booked:hover {
+  opacity: 0.8;
 }
 
 .wholeOverlay {
@@ -322,8 +365,9 @@
 
 #confirmButton,
 #cancelButton {
+  font-weight: 300;
   background-color: rgb(96, 255, 96);
-  color: white;
+  color: rgb(0, 0, 0);
   padding: 10px 10px;
   margin: 10px;
   border: none;
