@@ -1,6 +1,17 @@
 $(document).ready(function () {
+  showWelcomeMessageAndRedirect();
   initializeCalendarAndReservations();
 });
+
+function showWelcomeMessageAndRedirect() {
+  $("#welcome-message,header").show();
+  $(".calendar, .timeslot_container, .seatnumber_container").hide();
+
+  setTimeout(function () {
+    $("#welcome-message").fadeOut(300);
+    $(".calendar, .timeslot_container, .seatnumber_container").fadeIn(800);
+  }, 2000);
+}
 
 function initializeCalendarAndReservations() {
   // Calendar Variables
@@ -318,7 +329,7 @@ function initializeCalendarAndReservations() {
       .html(`Time Slot: <span class="info">${timeslot}</span>`)
       .appendTo(seatNumberDiv);
 
-    $("<h3>").html(`Seat Number <span class="info">`).appendTo(seatNumberDiv);
+    $("<h3>").html(`Seat Number <span class="info">`).appendTo(seatNumberDiv);;
 
     seatNumberObject.forEach((seat) => {
       let status = seat.status;
