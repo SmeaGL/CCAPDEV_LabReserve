@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" href="commonStyle.css" />
-    <link rel="stylesheet" type="text/css" href="reserveSlot.css" />
+    <link rel="stylesheet" type="text/css" href="/css/commonStyle.css" />
+    <link rel="stylesheet" type="text/css" href="/css/reserveSlot.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="reserveSlot.js"></script>
+    <script src="/js/reserveSlot.js"></script>
     <title>Reserve Slot</title>
   </head>
   <body>
-    <div id="welcome-message">
-      <p>Welcome!</p>
-    </div>
     <header>
       <h2 class="logo">Reserve Slot</h2>
       <nav class="navigation">
-        <a href="editReservation.html">Edit Reservation</a>
-        <a href="profile.html" class="icon-link">
+        <a href="/editReservation">Edit Reservation</a>
+        <a href="/profile" class="icon-link">
           <i class="fas fa-user" style="font-size: 29px"></i>
         </a>
-        <button
-          class="btnLogin-popup"
-          onclick="window.location.href='login.html'"
-        >
+        <button class="btnLogin-popup" onclick="window.location.href='/login'">
           Logout
         </button>
       </nav>
