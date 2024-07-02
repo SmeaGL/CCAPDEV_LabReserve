@@ -318,28 +318,33 @@ function initializeCalendarAndReservations() {
       .html(`Time Slot: <span class="info">${timeslot}</span>`)
       .appendTo(seatNumberDiv);
 
-    $("<h3>").html(`Seat Number <span class="info">`).appendTo(seatNumberDiv);
+    $("<h3>").html(`Seat Number`).appendTo(seatNumberDiv);
 
     seatNumberObject.forEach((seat) => {
       let status = seat.status;
 
-      const p = $("<p>");
+      const seatInfo = $("<p>").html(`${seat.seatNumber}`);
+
+      const statusButton = $("<button>");
+      statusButton.html(status); // Set the button text to the availability status
 
       if (status === "Available") {
-        p.html(`${seat.seatNumber}  <span id="available">${status}</span>`);
-        p.on("click", function () {
+        statusButton.addClass("available");
+        statusButton.on("click", function () {
           const labNumber = selectedLab.val();
           confirmBooking(timeslot, seat, labNumber);
         });
       } else {
+        statusButton.addClass("booked");
         const { bookerName, bookingDate, requestTime } = seat.info;
-        p.html(`${seat.seatNumber}  <span id="booked">${status}</span>`);
-        p.on("click", function () {
+        statusButton.on("click", function () {
           displayBookingInfo(seat, bookerName, bookingDate, requestTime);
         });
       }
 
-      seatNumberDiv.append(p);
+      const seatContainer = $("<div>").addClass("seat_container");
+      seatContainer.append(seatInfo, statusButton);
+      seatNumberDiv.append(seatContainer);
     });
   };
 

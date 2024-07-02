@@ -190,6 +190,7 @@
 .seatnumber_container {
   max-width: 450px;
   width: 290px;
+  display: flex;
 }
 
 .timeslot_reservation,
@@ -234,19 +235,22 @@
   text-decoration: underline;
   margin-left: 42px;
 }
-
-#available {
-  color: rgb(96, 255, 96);
-  margin-left: 60px;
+.available,
+.booked {
+  width: 90px;
+  height: 30px;
+  color: black;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  text-decoration: underline;
 }
 
-#booked {
-  color: rgb(255, 0, 43);
-  cursor: pointer;
-  text-decoration: underline;
-  margin-left: 60px;
+.available {
+  background-color: rgb(96, 255, 96);
+}
+
+.booked {
+  background-color: rgb(255, 0, 43);
 }
 
 .wholeOverlay {
