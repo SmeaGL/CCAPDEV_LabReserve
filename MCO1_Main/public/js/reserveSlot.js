@@ -10,6 +10,8 @@ function initializeCalendarAndReservations() {
   const btnElements = $(".calendar_heading .fas");
   const monthyearElements = $(".month_year");
 
+  let labs = ["G301", "G302", "G303A", "G303B"];
+
   let dateMonthObject = [
     {
       days: [
@@ -352,7 +354,7 @@ function initializeCalendarAndReservations() {
   };
 
   function confirmBooking(timeslot, seat, labNumber) {
-    const bookerName = "Your Name"; // Replace with the actual booker's name if needed
+    const bookerName = "Your Name";
     const bookingDate = new Date().toLocaleDateString();
     const requestTime = new Date().toLocaleTimeString();
 

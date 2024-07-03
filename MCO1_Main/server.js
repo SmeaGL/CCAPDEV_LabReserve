@@ -43,6 +43,8 @@ app.get("/reserveSlot", (req, res) => {
     layout: "main",
     style: "reserveSlot.css",
     javascript: "reserveSlot.js",
+    labs: ["G301", "G302", "G303A", "G303B"],
+    daysOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
   });
 });
 
