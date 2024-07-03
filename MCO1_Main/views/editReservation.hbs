@@ -1,0 +1,66 @@
+<header>
+  <h2 class="logo">Edit Reservation</h2>
+  <nav class="navigation">
+    <a href="/reserveSlot">Reserve Slot</a>
+    <a href="/profile" class="icon-link"><i
+        class="fas fa-user"
+        style="font-size: 29px"
+      ></i></a>
+    <button class="btnLogin-popup" onclick="window.location.href='/login'">
+      Logout</button>>
+  </nav>
+</header>
+<div class="page">
+  <div class="timeslot_container">
+    <div class="user-profile">
+      <img
+        src="../images/avatar.png"
+        alt="User Profile Picture"
+        width="80"
+        height="80"
+      />
+      <div class="user-info">
+        <strong>User: Shawn CoChiong</strong>
+        <br />
+        <span>Email: shawn_cochiong@dlsu.edu.ph</span>
+      </div>
+      <p class="my_reservation">My Reservation</p>
+    </div>
+    <div class="user-description-box">
+      <p>I love CCAPDEV, so I will book a lot of computer labs!</p>
+    </div>
+    <table class="lab_reservations">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Seat Number</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>G301</td>
+          <td>A1</td>
+          <td>2024-02-20</td>
+          <td>11:00 AM</td>
+          <td class="button-cell">
+            <button class="edit_button">Edit</button>
+            <button class="cancel_button">Cancel</button>
+          </td>
+        </tr>
+        <tr>
+          <td>G301</td>
+          <td>A1</td>
+          <td>2024-02-21</td>
+          <td>02:30 PM</td>
+          <td class="button-cell">
+            <button class="edit_button">Edit</button>
+            <button class="cancel_button">Cancel</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<header>
+  <h2 class="logo">Profile</h2>
+  <nav class="navigation">
+    <a href="/editReservation">Edit Reservation</a>
+    <a href="/reserveSlot">Reserve Slot</a>
+    <button class="btnLogin-popup" onclick="window.location.href='/login'">
+      Logout
+    </button>
+  </nav>
+</header>
+<div class="page">
+  <nav class="navigation"></nav>
+  <div id="top" class="container">
+    <div class="user-profile">
+      <img
+        src="images/avatar.png"
+        alt="User Profile Picture"
+        width="80"
+        height="80"
+      />
+      <div class="user-info">
+        <strong>User: Shawn CoChiong</strong>
+        <br />
+        <span>Email: shawn_cochiong@dlsu.edu.ph</span>
+      </div>
+      <button class="delete-profile-btn">Delete Profile</button>
+    </div>
+    <div class="user-description-box">
+      <p>I love CCAPDEV, so I will book a lot of computer labs!</p>
+    </div>
+
+    <h2>My Lab Reservations</h2>
+
+    <table class="lab-reservations">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Seat Number</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>G301</td>
+          <td>A1</td>
+          <td>2024-02-20</td>
+          <td>11:00 AM</td>
+        </tr>
+        <tr>
+          <td>G301</td>
+          <td>A1</td>
+          <td>2024-02-21</td>
+          <td>02:30 PM</td>
+        </tr>
+        <!-- Add more rows for additional reservations -->
+      </tbody>
+    </table>
+
+    <button class="edit-profile-btn">Edit Profile</button>
+  </div>
+
+  <div class="container">
+    <h2>Public Profile</h2>
+
+    <table class="public-profile">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="student-info" data-toggle="student1">
+          <td>shawn_cochiong@dlsu.edu.ph</td>
+          <td>Shawn CoChiong</td>
+        </tr>
+        <tr class="student-info" data-toggle="student2">
+          <td>andrei_tamse@dlsu.edu.ph</td>
+          <td>Andrei Tamse adonis</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src=" "></script>
