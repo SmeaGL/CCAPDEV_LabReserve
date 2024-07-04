@@ -21,6 +21,7 @@ app.get("/contact", (req, res) => {
   res.render("contact", {
     title: "Contact Information",
     logo: "Contact Information",
+    isAuthenticated: false,
     layout: "main",
     style: "contact.css",
   });
@@ -29,7 +30,8 @@ app.get("/contact", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",
-    logo: "Login",
+    logo: "User Login",
+    isAuthenticated: false,
     layout: "main",
     style: "loginstyle.css",
     javascript: "loginscript.js",
@@ -40,6 +42,7 @@ app.get("/reserveSlot", (req, res) => {
   res.render("reserveSlot", {
     title: "Reserve Slot",
     logo: "Reserve Slot",
+    isAuthenticated: true,
     layout: "main",
     style: "reserveSlot.css",
     javascript: "reserveSlot.js",
@@ -52,6 +55,7 @@ app.get("/profile", (req, res) => {
   res.render("profile", {
     title: "Profile",
     logo: "Profile",
+    isAuthenticated: true,
     layout: "main",
     style: "profile.css",
     javascript: "profile.js",
@@ -62,6 +66,7 @@ app.get("/editReservation", (req, res) => {
   res.render("editReservation", {
     title: "Edit Reservation",
     logo: "Edit Reservation",
+    isAuthenticated: true,
     layout: "main",
     style: "editReservation.css",
     javascript: "editReservation.js",
