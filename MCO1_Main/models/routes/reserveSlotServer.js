@@ -1,6 +1,10 @@
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+
+const app = express();
+const router = express.Router();
+
 const {
   DateModel,
   LaboratoryNumber,
@@ -10,12 +14,21 @@ const {
 
 const PORT = process.env.PORT || 3000;
 
+app.use(bodyParser.json());
+
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/CCAPDEV", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
+mongoose.connection.on("connected", () => {
+  console.log("Connected to MongoDB");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
 // GET /api/available-dates
 router.get("/available-dates", async (req, res) => {
   try {
@@ -164,6 +177,91 @@ router.get("/seat-statuses", async (req, res) => {
     res
       .status(500)
       .json({ error: "Internal server error", details: error.message });
+  }
+});
+
+router.post("/confirm-booking", async (req, res) => {
+  const { seatNumber, labNumber, bookerName, bookingDate, requestTime } =
+    req.query;
+
+  try {
+    const queryDate = new Date(bookingDate);
+    queryDate.setUTCHours(12, 0, 0, 0);
+
+    const dateDoc = await DateModel.findOne({
+      date: {
+        $gte: new Date(queryDate.getTime()),
+        $lt: new Date(queryDate.getTime() + 24 * 60 * 60 * 1000),
+      },
+    });
+    console.log("Date:", dateDoc.date);
+    const laboratory = await LaboratoryNumber.findOne({
+      laboratoryNumber: labNumber,
+      date: dateDoc._id,
+    }).populate({
+      path: "timeSlots",
+      populate: {
+        path: "seatStatuses",
+        match: { seatNumber: seatNumber, status: "Available" },
+      },
+    });
+    console.log("Laboratory Data:", laboratory);
+    if (
+      !laboratory ||
+      !laboratory.timeSlots ||
+      laboratory.timeSlots.length === 0
+    ) {
+      console.log("Laboratory or time slot not found:", labNumber);
+      return res
+        .status(404)
+        .json({ message: "Laboratory or time slot not found" });
+    }
+
+    const timeSlot = laboratory.timeSlots.find(
+      (slot) => slot.seatStatuses.length > 0
+    );
+
+    if (!timeSlot) {
+      console.log("Time slot not found with available seats:", seatNumber);
+      return res
+        .status(404)
+        .json({ message: "Time slot not found with available seats" });
+    }
+
+    const seatStatus = timeSlot.seatStatuses.find(
+      (status) => status.seatNumber === seatNumber
+    );
+
+    if (!seatStatus) {
+      console.log("Seat status not found:", seatNumber);
+      return res.status(404).json({ message: "Seat status not found" });
+    }
+
+    console.log("Seat status found:", seatStatus);
+
+    if (seatStatus.status !== "Available") {
+      console.log("Seat is already booked or unavailable");
+      return res
+        .status(409)
+        .json({ message: "Seat is already booked or unavailable" });
+    }
+
+    // Update the seat status
+    seatStatus.status = "Booked";
+    seatStatus.info = { bookerName, bookingDate, requestTime };
+
+    const updatedSeatStatus = await seatStatus.save();
+
+    console.log("Updated seat status:", updatedSeatStatus); // Log the updated seat status
+
+    res
+      .status(200)
+      .json({ message: "Booking confirmed", seatStatus: updatedSeatStatus });
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", details: error.message });
   }
 });
 

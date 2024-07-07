@@ -3,8 +3,7 @@ const app = express();
 const { engine } = require("express-handlebars");
 const path = require("path");
 const routes = require("./models/routes/reserveSlotServer");
-
-// Define the view engine and path to views directory
+const router = express.Router();
 
 app.engine(
   "hbs",
@@ -20,6 +19,7 @@ app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/api", routes);
+app.use("/api", router);
 
 app.get("/contact", (req, res) => {
   res.render("contact", {

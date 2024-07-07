@@ -190,13 +190,12 @@ function initializeCalendarAndReservations() {
       const parsedDate = new Date(date);
       const formattedDate = parsedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
 
-      // Check if the same lab, date, and timeslot are already displayed
       if (
         labNumber === displayedLab &&
         date === displayedDate &&
         timeslot === displayedTimeslot
       ) {
-        return; // Exit function if already displayed
+        return;
       }
 
       const response = await fetch(
@@ -211,7 +210,7 @@ function initializeCalendarAndReservations() {
       // Update displayed state
       displayedLab = labNumber;
       displayedDate = date;
-      displayedTimeslot = timeslots[0].timeSlot; // Assuming first timeslot for simplicity
+      displayedTimeslot = timeslots[0].timeSlot;
 
       displayTimeslots(timeslots, labNumber, date);
     } catch (error) {
@@ -309,7 +308,9 @@ function initializeCalendarAndReservations() {
   const displaySundaySeatNumber = () => {
     const seatNumberDiv = $(".seat_number");
     seatNumberDiv.empty();
-    seatNumberDiv.html("<h2>Laboratories are closed every Sunday.</h2>");
+    seatNumberDiv.html(
+      "<h2>Laboratory is close on this date. Please check other dates.</h2>"
+    );
   };
 
   const displaySeatNumberReservation = (timeslot, date, seatStatuses) => {
@@ -336,9 +337,9 @@ function initializeCalendarAndReservations() {
         statusButton.addClass("available");
         statusButton.on("click", function () {
           const labNumber = selectedLab.val();
-          confirmBooking(timeslot, seat, labNumber);
+          confirmBooking(timeslot, seat, labNumber, date);
         });
-      } else {
+      } else if (status === "Booked") {
         statusButton.addClass("booked");
         const { bookerName, bookingDate, requestTime } = seat.info;
         statusButton.on("click", function () {
@@ -357,28 +358,58 @@ function initializeCalendarAndReservations() {
     });
   };
 
-  function confirmBooking(timeslot, seat, labNumber) {
+  function confirmBooking(timeslot, seat, labNumber, date) {
     const bookerName = "Your Name";
-    const bookingDate = new Date().toLocaleDateString();
     const requestTime = new Date().toLocaleTimeString();
+    const bookingDate = date;
 
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
     bookingInfo.html(`
-      <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
-      <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
-      <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
-      <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
-      <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
-      <button id="cancelButton">Cancel</button>
-      <button id="confirmButton">Confirm Booking</button>
+        <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
+        <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
+        <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
+        <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
+        <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
+        <button id="cancelButton">Cancel</button>
+        <button id="confirmButton">Confirm Booking</button>
     `);
+
+    const bookingData = {
+      timeslot,
+      seatNumber: seat.seatNumber,
+      labNumber,
+      bookerName,
+      bookingDate,
+      requestTime,
+    };
+
+    console.log("Booking Data being sent:", bookingData); // Debugging line
 
     overlay.show();
 
-    $("#confirmButton").on("click", function () {
-      overlay.hide();
-      alert("Booking confirmed!");
+    $("#confirmButton").on("click", async function () {
+      try {
+        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookerName=${bookerName}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
+        const response = await fetch("/api/confirm-booking" + queryString, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        overlay.hide();
+        alert("Booking confirmed!");
+      } catch (error) {
+        console.error("Error confirming booking:", error);
+        alert("Error confirming booking. Please try again.");
+      }
     });
 
     $("#cancelButton").on("click", function () {
