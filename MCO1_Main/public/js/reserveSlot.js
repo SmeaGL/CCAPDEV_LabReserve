@@ -406,6 +406,9 @@ function initializeCalendarAndReservations() {
 
         overlay.hide();
         alert("Booking confirmed!");
+        await displaySeatNumberReservationFromAPI(labNumber, timeslot, date);
+        console.log(date);
+        // await displayTimeslotReservation(labNumber, date);
       } catch (error) {
         console.error("Error confirming booking:", error);
         alert("Error confirming booking. Please try again.");
