@@ -17,10 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // MongoDB connection
-mongoose.connect("mongodb://localhost:27017/CCAPDEV", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect("mongodb://localhost/CCAPDEV");
 
 mongoose.connection.on("connected", () => {
   console.log("Connected to MongoDB");
@@ -56,15 +53,6 @@ router.get("/available-dates", async (req, res) => {
     res.json({ availableDates });
   } catch (error) {
     console.error("Error fetching available dates:", error);
-    if (error.message === "Database not connected") {
-      res
-        .status(500)
-        .json({ error: "Database connection error", details: error.message });
-    } else {
-      res
-        .status(500)
-        .json({ error: "Internal server error", details: error.message });
-    }
   }
 });
 

@@ -264,7 +264,7 @@
 }
 
 #unavailable {
-  color: rgb(255, 0, 43);
+  color: rgb(255, 0, 0);
   cursor: default;
 }
 #slotsLeft {
@@ -279,7 +279,8 @@
   text-decoration: underline;
 }
 .available,
-.booked {
+.booked,
+.unavailable {
   color: black;
   border: none;
   border-radius: 4px;
@@ -299,10 +300,15 @@
   background-color: rgb(96, 255, 96);
 }
 
-.booked {
+.booked,
+.unavailable {
   background-color: rgb(255, 0, 43);
 }
 
+.unavailable {
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+}
 .available:hover,
 .booked:hover {
   opacity: 0.8;
@@ -371,6 +377,12 @@
   font-style: normal;
   color: rgb(19, 149, 255);
   margin-left: 5px;
+}
+.bookingConfirmed {
+  font-style: normal;
+  color: rgb(96, 255, 96);
+  margin-top: 520px;
+  margin-left: 60px;
 }
 
 .bookingLine {

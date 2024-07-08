@@ -6,10 +6,7 @@ const {
   SeatStatus,
 } = require("./laboratorySchema"); // Adjust the path as needed
 
-mongoose.connect("mongodb://localhost:27017/CCAPDEV", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect("mongodb://localhost/CCAPDEV");
 
 const db = mongoose.connection;
 

@@ -190,14 +190,6 @@ function initializeCalendarAndReservations() {
       const parsedDate = new Date(date);
       const formattedDate = parsedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
 
-      if (
-        labNumber === displayedLab &&
-        date === displayedDate &&
-        timeslot === displayedTimeslot
-      ) {
-        return;
-      }
-
       const response = await fetch(
         `/api/timeslots?labNumber=${labNumber}&date=${formattedDate}`
       );
@@ -263,15 +255,15 @@ function initializeCalendarAndReservations() {
       timeSlotDiv.append(p);
     });
 
-    if (lastClickedTimeslot) {
-      displaySeatNumberReservationFromAPI(labNumber, lastClickedTimeslot, date);
-    } else {
-      // Display seat number reservation for default timeslot
+    if (lastClickedTimeslot == null) {
       displaySeatNumberReservationFromAPI(
         labNumber,
         timeslots[0].timeSlot,
         date
       );
+    } else {
+      // Display seat number reservation for default timeslot
+      displaySeatNumberReservationFromAPI(labNumber, lastClickedTimeslot, date);
     }
   };
 
@@ -333,10 +325,26 @@ function initializeCalendarAndReservations() {
 
       const statusButton = $("<button>").html(status).addClass("status-button");
 
-      if (status === "Available") {
+      const parseDate = (dateString) => {
+        const dateObj = new Date(dateString);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const day = String(dateObj.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const formattedDate = parseDate(date);
+      const endTime = timeslot.split(" - ")[1];
+      const reservationDateTime = new Date(`${formattedDate}T${endTime}:00`);
+
+      const currentDateTime = new Date();
+      const labNumber = selectedLab.val();
+      if (reservationDateTime < currentDateTime && status !== "Booked") {
+        status = "Unavailable";
+        statusButton.html(status).addClass("unavailable");
+      } else if (status === "Available") {
         statusButton.addClass("available");
         statusButton.on("click", function () {
-          const labNumber = selectedLab.val();
           confirmBooking(timeslot, seat, labNumber, date);
         });
       } else if (status === "Booked") {
@@ -348,7 +356,8 @@ function initializeCalendarAndReservations() {
             seat,
             bookerName,
             bookingDate,
-            requestTime
+            requestTime,
+            labNumber
           );
         });
       }
@@ -375,17 +384,6 @@ function initializeCalendarAndReservations() {
         <button id="confirmButton">Confirm Booking</button>
     `);
 
-    const bookingData = {
-      timeslot,
-      seatNumber: seat.seatNumber,
-      labNumber,
-      bookerName,
-      bookingDate,
-      requestTime,
-    };
-
-    console.log("Booking Data being sent:", bookingData); // Debugging line
-
     overlay.show();
 
     $("#confirmButton").on("click", async function () {
@@ -405,9 +403,20 @@ function initializeCalendarAndReservations() {
         const result = await response.json();
 
         overlay.hide();
-        alert("Booking confirmed!");
+        isConfirmed = true;
+        displayBookingInfo(
+          timeslot,
+          seat,
+          bookerName,
+          bookingDate,
+          labNumber,
+          requestTime,
+          isConfirmed
+        );
         await displaySeatNumberReservationFromAPI(labNumber, timeslot, date);
-        console.log(date);
+        await displayTimeslotReservation(labNumber, date);
+        // console.log(timeslot);
+
         // await displayTimeslotReservation(labNumber, date);
       } catch (error) {
         console.error("Error confirming booking:", error);
@@ -425,16 +434,29 @@ function initializeCalendarAndReservations() {
     slot,
     bookerName,
     bookingDate,
-    requestTime
+    requestTime,
+    labNumber,
+    isConfirmed = false
   ) {
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
+    // changep profile link to user
     bookingInfo.html(`
-      <span class="bookingLine">Booker : <span class="bookingInfoValue">${bookerName}</span></span><br>
-      <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${slot.seatNumber}</span></span><br>
-      <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${slot.laboratory}</span></span><br>
+      
+      <span class="bookingLine">Booker : 
+        <a href="/profile" class="bookingInfoValue">${bookerName}</a> 
+      </span><br>
+      <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${
+        slot.seatNumber
+      }</span></span><br>
+      <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${labNumber}</span></span><br>
       <span class="bookingLine">Request Time : <span class="bookingInfoValue">${requestTime}</span></span><br>
-      <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span>
+      <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span><br>
+      ${
+        isConfirmed
+          ? '<span class="bookingLine"><span class="bookingConfirmed">Booking Confirmed!</span></span><br>'
+          : ""
+      }
     `);
     overlay.show();
   }
