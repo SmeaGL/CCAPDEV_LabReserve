@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const userProfile = new Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  userType: { type: String, required: true },
+  bookings: [
+    {
+    type: Schema.Types.ObjectId,
+    ref: "SeatStatus",
+    },
+  ], 
+});
+
 const dateSchema = new Schema({
   date: { type: Date, required: true, unique: true },
   laboratories: [
@@ -46,6 +59,7 @@ const seatStatusSchema = new Schema({
   seatNumber: { type: String, required: true },
   status: { type: String, required: true },
   timeSlot: { type: Schema.Types.ObjectId, ref: "TimeSlot", required: true },
+  userProfile: { type: Schema.Types.ObjectId, ref: "userProfile" },
   info: {
     bookerName: String,
     bookingDate: String,
@@ -54,6 +68,7 @@ const seatStatusSchema = new Schema({
 });
 
 // Models
+const userProfileModel = mongoose.model("userProfile", userProfile);
 const DateModel = mongoose.model("Date", dateSchema);
 const LaboratoryNumber = mongoose.model(
   "LaboratoryNumber",
@@ -67,4 +82,5 @@ module.exports = {
   LaboratoryNumber,
   TimeSlot,
   SeatStatus,
+  userProfileModel
 };
