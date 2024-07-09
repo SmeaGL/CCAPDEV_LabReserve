@@ -5,6 +5,7 @@ const path = require("path");
 const routes = require("./models/routes/reserveSlotServer");
 const router = express.Router();
 
+// Configure Handlebars
 app.engine(
   "hbs",
   engine({
@@ -17,10 +18,19 @@ app.engine(
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
+
+// Middleware to serve static files
 app.use(express.static(path.join(__dirname, "public")));
+
+// Middleware to parse JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
 app.use("/api", routes);
 app.use("/api", router);
 
+// Define routes
 app.get("/contact", (req, res) => {
   res.render("contact", {
     title: "Contact Information",
@@ -77,6 +87,7 @@ app.get("/editReservation", (req, res) => {
   });
 });
 
+// MongoDB Connection
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

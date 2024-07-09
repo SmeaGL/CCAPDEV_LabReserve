@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const { DateModel } = require("./models/laboratorySchema");
+const { DateModel, userProfileModel } = require("./models/laboratorySchema");
 
 const PORT = process.env.PORT || 3000;
 
@@ -51,6 +51,52 @@ router.get("/available-dates", async (req, res) => {
         .status(500)
         .json({ error: "Internal server error", details: error.message });
     }
+  }
+});
+
+// POST /api/register
+router.post("/register", async (req, res) => {
+  const { username, email, password, userType } = req.body;
+
+  try {
+    // Checks if username or email is already in use
+    const existingUser = await userProfileModel.findOne({ 
+      $or: [{ username }, { email }],
+    });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already in use" });
+    }
+
+    // Create a new user profile
+    const newUser = new userProfileModel({
+      username,
+      email,
+      password,
+      userType,
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "User successfully registered" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /api/login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await userProfileModel.findOne({ email, password });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
+
+    res.status(200).json({ message: "Login successful", user });
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
