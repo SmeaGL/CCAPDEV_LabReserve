@@ -4,6 +4,7 @@ const {
   LaboratoryNumber,
   TimeSlot,
   SeatStatus,
+  userProfileModel,
 } = require("./laboratorySchema"); // Adjust the path as needed
 
 mongoose.connect("mongodb://localhost/CCAPDEV");
@@ -15,10 +16,18 @@ db.once("open", async () => {
 
   try {
     // Clear existing data
+    await userProfileModel.deleteMany({});
     await DateModel.deleteMany({});
     await LaboratoryNumber.deleteMany({});
     await TimeSlot.deleteMany({});
     await SeatStatus.deleteMany({});
+
+    const userAdmin = await userProfileModel.create({
+      username : "admin",
+      email : "admin@dlsu.edu.ph",
+      password : "admin",
+      userType : "faculty",
+    });
 
     const labNumbers = ["G301", "G302", "G303A", "G303B"];
     const timeSlots = [
@@ -104,6 +113,7 @@ db.once("open", async () => {
     const timeSlotCount = await TimeSlot.countDocuments();
     const seatStatusCount = await SeatStatus.countDocuments();
 
+    console.log(`Inserted user profile: ${userAdmin}`);
     console.log(`Total dates inserted: ${dateCount}`);
     console.log(`Total laboratory numbers inserted: ${laboratoryCount}`);
     console.log(`Total time slots inserted: ${timeSlotCount}`);
