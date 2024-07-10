@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const {
   DateModel,
   LaboratoryNumber,
@@ -25,7 +26,7 @@ db.once("open", async () => {
     const userAdmin = await userProfileModel.create({
       username : "admin",
       email : "admin@dlsu.edu.ph",
-      password : "admin",
+      password : await bcrypt.hash("admin", 10),
       userType : "faculty",
     });
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const router = express.Router();
@@ -27,21 +28,33 @@ mongoose.connection.on("error", (err) => {
 // POST /api/register
 router.post("/register", async (req, res) => {
     const { username, email, password, userType } = req.body;
+    const VALID_USER_TYPES = ["student", "faculty"];
   
+    if (!username || !email || !password || !userType) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check if userType is valid
+    if (!VALID_USER_TYPES.includes(userType)) {
+        return res.status(400).json({ error: "Invalid user type" });
+    }
+    
     try {
       // Checks if username or email is already in use
       const existingUser = await userProfileModel.findOne({ 
         $or: [{ username }, { email }],
       });
       if (existingUser) {
-        return res.status(400).json({ error: "Email already in use" });
+        return res.status(400).json({ error: "Username or Email already in use" });
       }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
   
       // Create a new user profile
       const newUser = new userProfileModel({
         username,
         email,
-        password,
+        password: hashedPassword,
         userType,
       });
   
@@ -56,12 +69,21 @@ router.post("/register", async (req, res) => {
 // GET /api/login
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
   
     try {
-      const user = await userProfileModel.findOne({ email, password });
-      if (!user) {
-        return res.status(400).json({ error: "Invalid email or password" });
-      }
+        const user = await userProfileModel.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
   
       res.status(200).json({ message: "Login successful", user });
     } catch (error) {

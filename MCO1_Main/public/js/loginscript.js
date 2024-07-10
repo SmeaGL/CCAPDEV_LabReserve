@@ -6,15 +6,15 @@ $(document).ready(function () {
     const username = $("#reg-username").val();
     const email = $("#reg-email").val();
     const password = $("#reg-password").val();
-    const usertype = $("#user-type").val();
+    const userType = $("#user-type").val();
 
     console.log("Register button clicked");
-    console.log({ username, email, password, usertype });
+    console.log({ username, email, password, userType });
 
     $.ajax({
       url: "/api/register",
       method: "POST",
-      data: { username, email, password, usertype },
+      data: { username, email, password, userType },
       success: function (response) {
         alert(response.message);
         console.log(response);
