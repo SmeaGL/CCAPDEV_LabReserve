@@ -7,4 +7,5 @@
 3. Run CMD on MCO directory.
 4. Run "node laboratorySchemaInsertion.js" on models/routes directory.
 5. Run "npm install express express-handlebars body-parser mongoose bcryptjs -s".
-6. Finally, run the server in main directory "node server.js"
+6. Run the server in main directory "node server.js"
+7. Finally, search "http://localhost:3000/login" on your chosen browser. /login is the home page.
