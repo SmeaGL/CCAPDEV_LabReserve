@@ -19,13 +19,6 @@ app.use(bodyParser.json());
 // MongoDB connection
 mongoose.connect("mongodb://localhost/CCAPDEV");
 
-mongoose.connection.on("connected", () => {
-  console.log("Connected to MongoDB");
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
-});
 // GET /api/available-dates
 router.get("/available-dates", async (req, res) => {
   try {
@@ -116,14 +109,8 @@ router.get("/seat-statuses", async (req, res) => {
   try {
     const { labNumber, timeslot, date } = req.query;
 
-    console.log(
-      `Fetching seat statuses for labNumber: ${labNumber}, timeslot: ${timeslot}, date: ${date}`
-    );
-
     const queryDate = new Date(date);
     queryDate.setUTCHours(12, 0, 0, 0);
-
-    console.log(`Query Date: ${queryDate.toISOString()}`);
 
     const dateDoc = await DateModel.findOne({
       date: {
@@ -131,11 +118,6 @@ router.get("/seat-statuses", async (req, res) => {
         $lt: new Date(queryDate.getTime() + 24 * 60 * 60 * 1000),
       },
     });
-
-    if (!dateDoc) {
-      console.log(`Date not found for queryDate: ${queryDate.toISOString()}`);
-      return res.status(404).json({ error: "Date not found" });
-    }
 
     const laboratory = await LaboratoryNumber.findOne({
       laboratoryNumber: labNumber,
@@ -148,17 +130,8 @@ router.get("/seat-statuses", async (req, res) => {
       },
     });
 
-    if (!laboratory || laboratory.timeSlots.length === 0) {
-      console.log(
-        `Time slot not found for labNumber: ${labNumber}, dateDoc._id: ${dateDoc._id}`
-      );
-      return res.status(404).json({
-        error: "Time slot not found for the given laboratory and date",
-      });
-    }
-
     const seatStatuses = laboratory.timeSlots[0].seatStatuses;
-    console.log(`Seat statuses fetched:`, seatStatuses);
+
     res.json({ seatStatuses });
   } catch (error) {
     console.error("Error fetching seat statuses:", error);
@@ -169,8 +142,10 @@ router.get("/seat-statuses", async (req, res) => {
 });
 
 router.post("/confirm-booking", async (req, res) => {
-  const { seatNumber, labNumber, bookerName, bookingDate, requestTime } =
-    req.query;
+  const { seatNumber, labNumber, bookingDate, requestTime } = req.query;
+
+  const bookerName = req.user.username;
+  const bookerEmail = req.user.email;
 
   try {
     const queryDate = new Date(bookingDate);
@@ -182,7 +157,7 @@ router.post("/confirm-booking", async (req, res) => {
         $lt: new Date(queryDate.getTime() + 24 * 60 * 60 * 1000),
       },
     });
-    console.log("Date:", dateDoc.date);
+
     const laboratory = await LaboratoryNumber.findOne({
       laboratoryNumber: labNumber,
       date: dateDoc._id,
@@ -193,54 +168,20 @@ router.post("/confirm-booking", async (req, res) => {
         match: { seatNumber: seatNumber, status: "Available" },
       },
     });
-    console.log("Laboratory Data:", laboratory);
-    if (
-      !laboratory ||
-      !laboratory.timeSlots ||
-      laboratory.timeSlots.length === 0
-    ) {
-      console.log("Laboratory or time slot not found:", labNumber);
-      return res
-        .status(404)
-        .json({ message: "Laboratory or time slot not found" });
-    }
 
     const timeSlot = laboratory.timeSlots.find(
       (slot) => slot.seatStatuses.length > 0
     );
 
-    if (!timeSlot) {
-      console.log("Time slot not found with available seats:", seatNumber);
-      return res
-        .status(404)
-        .json({ message: "Time slot not found with available seats" });
-    }
-
     const seatStatus = timeSlot.seatStatuses.find(
       (status) => status.seatNumber === seatNumber
     );
 
-    if (!seatStatus) {
-      console.log("Seat status not found:", seatNumber);
-      return res.status(404).json({ message: "Seat status not found" });
-    }
-
-    console.log("Seat status found:", seatStatus);
-
-    if (seatStatus.status !== "Available") {
-      console.log("Seat is already booked or unavailable");
-      return res
-        .status(409)
-        .json({ message: "Seat is already booked or unavailable" });
-    }
-
     // Update the seat status
     seatStatus.status = "Booked";
-    seatStatus.info = { bookerName, bookingDate, requestTime };
+    seatStatus.info = { bookerName, bookerEmail, bookingDate, requestTime };
 
     const updatedSeatStatus = await seatStatus.save();
-
-    console.log("Updated seat status:", updatedSeatStatus); // Log the updated seat status
 
     res
       .status(200)

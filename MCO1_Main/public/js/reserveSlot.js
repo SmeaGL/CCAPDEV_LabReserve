@@ -170,7 +170,6 @@ function initializeCalendarAndReservations() {
       }
 
       const data = await response.json();
-      console.log("Fetched data:", data);
       return data.availableDates;
     } catch (error) {
       console.error("Error fetching available dates:", error);
@@ -371,7 +370,7 @@ function initializeCalendarAndReservations() {
     const bookerName = "Your Name";
     const requestTime = new Date().toLocaleTimeString();
     const bookingDate = date;
-
+    const bookerEmail = "admin@dlsu.edu.ph";
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
     bookingInfo.html(`
@@ -388,7 +387,7 @@ function initializeCalendarAndReservations() {
 
     $("#confirmButton").on("click", async function () {
       try {
-        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookerName=${bookerName}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
+        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookerName=${bookerName}&bookerEmail=${bookerEmail}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
         const response = await fetch("/api/confirm-booking" + queryString, {
           method: "POST",
           headers: {
@@ -413,11 +412,9 @@ function initializeCalendarAndReservations() {
           requestTime,
           isConfirmed
         );
+        console.log("UserEMAIL" + bookerEmail);
         await displaySeatNumberReservationFromAPI(labNumber, timeslot, date);
         await displayTimeslotReservation(labNumber, date);
-        // console.log(timeslot);
-
-        // await displayTimeslotReservation(labNumber, date);
       } catch (error) {
         console.error("Error confirming booking:", error);
         alert("Error confirming booking. Please try again.");

@@ -8,10 +8,10 @@ const userProfile = new Schema({
   userType: { type: String, required: true },
   bookings: [
     {
-    type: Schema.Types.ObjectId,
-    ref: "SeatStatus",
+      type: Schema.Types.ObjectId,
+      ref: "SeatStatus",
     },
-  ], 
+  ],
 });
 
 const dateSchema = new Schema({
@@ -62,6 +62,7 @@ const seatStatusSchema = new Schema({
   userProfile: { type: Schema.Types.ObjectId, ref: "userProfile" },
   info: {
     bookerName: String,
+    bookerEmail: String,
     bookingDate: String,
     requestTime: String,
   },
@@ -82,5 +83,5 @@ module.exports = {
   LaboratoryNumber,
   TimeSlot,
   SeatStatus,
-  userProfileModel
+  userProfileModel,
 };
