@@ -348,12 +348,14 @@ function initializeCalendarAndReservations() {
         });
       } else if (status === "Booked") {
         statusButton.addClass("booked");
-        const { bookerName, bookingDate, requestTime } = seat.info;
+        const { bookerName, bookerEmail, bookingDate, requestTime } = seat.info;
+
         statusButton.on("click", function () {
           displayBookingInfo(
             timeslot,
             seat,
             bookerName,
+            bookerEmail,
             bookingDate,
             requestTime,
             labNumber
@@ -367,10 +369,8 @@ function initializeCalendarAndReservations() {
   };
 
   function confirmBooking(timeslot, seat, labNumber, date) {
-    const bookerName = "Your Name";
     const requestTime = new Date().toLocaleTimeString();
     const bookingDate = date;
-    const bookerEmail = "admin@dlsu.edu.ph";
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
     bookingInfo.html(`
@@ -387,7 +387,7 @@ function initializeCalendarAndReservations() {
 
     $("#confirmButton").on("click", async function () {
       try {
-        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookerName=${bookerName}&bookerEmail=${bookerEmail}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
+        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
         const response = await fetch("/api/confirm-booking" + queryString, {
           method: "POST",
           headers: {
@@ -402,17 +402,23 @@ function initializeCalendarAndReservations() {
         const result = await response.json();
 
         overlay.hide();
-        isConfirmed = true;
+        const isConfirmed = true;
+
+        // Use the bookerName from the server response
+        const bookerName = result.seatStatus.info.bookerName;
+        const bookerEmail = result.seatStatus.info.bookerEmail;
+
         displayBookingInfo(
           timeslot,
           seat,
           bookerName,
+          bookerEmail,
           bookingDate,
-          labNumber,
           requestTime,
+          labNumber,
           isConfirmed
         );
-        console.log("UserEMAIL" + bookerEmail);
+
         await displaySeatNumberReservationFromAPI(labNumber, timeslot, date);
         await displayTimeslotReservation(labNumber, date);
       } catch (error) {
@@ -430,6 +436,7 @@ function initializeCalendarAndReservations() {
     timeslot,
     slot,
     bookerName,
+    bookerEmail,
     bookingDate,
     requestTime,
     labNumber,
@@ -440,9 +447,10 @@ function initializeCalendarAndReservations() {
     // changep profile link to user
     bookingInfo.html(`
       
-      <span class="bookingLine">Booker : 
+      <span class="bookingLine">Booker Name: 
         <a href="/profile" class="bookingInfoValue">${bookerName}</a> 
       </span><br>
+      <span class="bookingLine">Booker Email: <span class="bookingInfoValue">${bookerEmail}</span></span><br>
       <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${
         slot.seatNumber
       }</span></span><br>

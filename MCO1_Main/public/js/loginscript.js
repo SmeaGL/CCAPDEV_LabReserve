@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
   // Register functionality
   $(".register-submit").on("click", function (event) {
     event.preventDefault(); // Prevent default form submission
@@ -30,9 +29,9 @@ $(document).ready(function () {
           status: xhr.status,
           statusText: xhr.statusText,
           responseText: xhr.responseText,
-          error: error
+          error: error,
         });
-      }
+      },
     });
   });
 
@@ -43,17 +42,11 @@ $(document).ready(function () {
     const password = $("#login-password").val();
     const rememberMe = $("#remember-me").is(":checked");
 
-    console.log("Login button clicked");
-    console.log({ email, password, rememberMe });
-
     $.ajax({
       url: "/api/login",
       method: "POST",
       data: { email, password },
       success: function (response) {
-        alert(response.message);
-        console.log(response);
-
         if (rememberMe) {
           localStorage.setItem("login-email", email);
           localStorage.setItem("login-password", password);
@@ -62,11 +55,17 @@ $(document).ready(function () {
           localStorage.removeItem("login-password");
         }
 
+        const username = response.user.username;
+        const welcomeMessage = $('<div id="welcome-message">')
+          .html(`<p>Welcome, ${username}!</p>`)
+          .hide()
+          .appendTo("body");
+
         $(".wrapper.action-popup").hide();
-        $("#welcome-message, header").fadeIn("slow");
+        $("#welcome-message").fadeIn("slow");
 
         setTimeout(() => {
-          $("#welcome-message, header").hide();
+          $("#welcome-message").hide();
           window.location.href = "/reserveSlot";
         }, 2500);
       },

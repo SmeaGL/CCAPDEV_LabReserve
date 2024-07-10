@@ -333,8 +333,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border: 1px solid #000000;
-  width: 400px;
-  height: 530px;
+  width: 350px;
+  height: auto;
   border-radius: 10px;
   padding-left: 15px;
 }
@@ -366,8 +366,8 @@
 }
 #bookingInfo {
   font-style: italic;
-  margin-left: 30px;
-  margin-top: 40px;
+  margin-left: 21px;
+  margin-top: 20px;
   font-size: 20px;
   text-align: left;
   justify-content: center;
@@ -381,13 +381,12 @@
 .bookingConfirmed {
   font-style: normal;
   color: rgb(96, 255, 96);
-  margin-top: 520px;
-  margin-left: 60px;
+
+  margin-left: 30px;
 }
 
 .bookingLine {
   display: block;
-  margin-top: 10px;
 }
 
 #confirmButton,

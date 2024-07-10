@@ -144,8 +144,9 @@ router.get("/seat-statuses", async (req, res) => {
 router.post("/confirm-booking", async (req, res) => {
   const { seatNumber, labNumber, bookingDate, requestTime } = req.query;
 
-  const bookerName = req.user.username;
-  const bookerEmail = req.user.email;
+  // Accessing user information from session
+  const bookerName = req.session.user.username;
+  const bookerEmail = req.session.user.email;
 
   try {
     const queryDate = new Date(bookingDate);
@@ -177,10 +178,9 @@ router.post("/confirm-booking", async (req, res) => {
       (status) => status.seatNumber === seatNumber
     );
 
-    // Update the seat status
     seatStatus.status = "Booked";
     seatStatus.info = { bookerName, bookerEmail, bookingDate, requestTime };
-
+    console.log(bookerName + bookerName);
     const updatedSeatStatus = await seatStatus.save();
 
     res

@@ -66,11 +66,19 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    // Create session
-    req.session.user = user;
-    res.cookie("sessionId", req.sessionID);
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      name: user.name,
+      email: user.email,
+      userType: user.userType,
+    };
 
-    res.status(200).json({ message: "Login successful", user });
+    res.cookie("sessionId", req.sessionID, { httpOnly: true });
+
+    res
+      .status(200)
+      .json({ message: "Login successful", user: req.session.user });
   } catch (error) {
     console.error("Error logging in user:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -81,7 +89,7 @@ router.post("/login", async (req, res) => {
 router.get("/logout", (req, res) => {
   req.session.destroy(() => {
     res.clearCookie("sessionId");
-    res.redirect("/");
+    res.redirect("/login");
   });
 });
 
