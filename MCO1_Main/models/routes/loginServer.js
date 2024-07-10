@@ -26,7 +26,7 @@ mongoose.connection.on("error", (err) => {
 
 // POST /api/register
 router.post("/register", async (req, res) => {
-    const { username, email, password, userType } = req.query;
+    const { username, email, password, userType } = req.body;
   
     try {
       // Checks if username or email is already in use
@@ -55,7 +55,7 @@ router.post("/register", async (req, res) => {
 
 // GET /api/login
 router.post("/login", async (req, res) => {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
   
     try {
       const user = await userProfileModel.findOne({ email, password });
@@ -68,8 +68,6 @@ router.post("/login", async (req, res) => {
       console.error("Error logging in user:", error);
       res.status(500).json({ error: "Internal server error" });
     }
-
-    console.log(user);
   });
   
   module.exports = router;

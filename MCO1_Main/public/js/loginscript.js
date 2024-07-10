@@ -18,15 +18,21 @@ $(document).ready(function () {
       success: function (response) {
         alert(response.message);
         console.log(response);
+        window.location.href = "/login"; // Redirect to login page
       },
-      error: function (xhr) {
+      error: function (xhr, status, error) {
         let errorMessage = "An error occurred";
         if (xhr.responseJSON && xhr.responseJSON.error) {
           errorMessage = xhr.responseJSON.error;
         }
         alert(errorMessage);
-        console.log(xhr);
-      },
+        console.log("Error details:", {
+          status: xhr.status,
+          statusText: xhr.statusText,
+          responseText: xhr.responseText,
+          error: error
+        });
+      }
     });
   });
 
