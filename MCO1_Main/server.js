@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const { engine } = require("express-handlebars");
 const path = require("path");
-const routes = require("./models/routes/reserveSlotServer");
+const routesRes = require("./models/routes/reserveSlotServer");
+const routesLog = require("./models/routes/loginServer");
 const router = express.Router();
 
 // Configure Handlebars
@@ -27,7 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api", routes);
+app.use("/api", routesRes);
+app.use("/api", routesLog);
 app.use("/api", router);
 
 // Define routes

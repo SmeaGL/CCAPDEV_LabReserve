@@ -8,18 +8,25 @@ $(document).ready(function () {
     const password = $("#reg-password").val();
     const usertype = $("#user-type").val();
 
+    console.log("Register button clicked");
+    console.log({ username, email, password, usertype });
+
     $.ajax({
-      url : "/api/register",
-      method : "POST",
-      data : { username, email, password, usertype },
-      success : function (response) {
+      url: "/api/register",
+      method: "POST",
+      data: { username, email, password, usertype },
+      success: function (response) {
         alert(response.message);
         console.log(response);
       },
-      error : function (xhr) {
-        alert(xhr.responseJSON.error);
+      error: function (xhr) {
+        let errorMessage = "An error occurred";
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        }
+        alert(errorMessage);
         console.log(xhr);
-      }, 
+      },
     });
   });
 
@@ -30,15 +37,18 @@ $(document).ready(function () {
     const password = $("#login-password").val();
     const rememberMe = $("#remember-me").is(":checked");
 
+    console.log("Login button clicked");
+    console.log({ email, password, rememberMe });
+
     $.ajax({
-      url : "/api/login",
-      method : "POST",
-      data : { email, password },
-      success : function (response) {
+      url: "/api/login",
+      method: "POST",
+      data: { email, password },
+      success: function (response) {
         alert(response.message);
         console.log(response);
-        
-        if(rememberMe) {
+
+        if (rememberMe) {
           localStorage.setItem("login-email", email);
           localStorage.setItem("login-password", password);
         } else {
@@ -55,8 +65,13 @@ $(document).ready(function () {
         }, 2500);
       },
       error: function (xhr) {
-        alert(xhr.responseJSON.error);
-      },    
+        let errorMessage = "An error occurred";
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        }
+        alert(errorMessage);
+        console.log(xhr);
+      },
     });
   });
 

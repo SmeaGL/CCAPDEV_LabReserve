@@ -169,7 +169,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-image: url("images/mail.png");
+  background-image: url("../images/mail.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -182,7 +182,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-image: url("images/lock.png");
+  background-image: url("../images/lock.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -195,7 +195,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-image: url("images/user.png");
+  background-image: url("../images/user.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -208,7 +208,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-image: url("images/usertype.png");
+  background-image: url("../images/usertype.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
