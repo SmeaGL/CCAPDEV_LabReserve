@@ -69,6 +69,7 @@ app.get("/contact", (req, res) => {
     isAuthenticated: false,
     layout: "main",
     style: "contact.css",
+    javascript: "",
   });
 });
 

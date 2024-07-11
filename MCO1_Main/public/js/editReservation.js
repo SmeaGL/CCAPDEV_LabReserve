@@ -12,17 +12,21 @@ $(document).ready(function () {
 
       const currentDate = new Date();
 
-      bookings.forEach((booking) => {
-        const bookingDate = new Date(booking.date);
-        const bookingTime = new Date(booking.timeSlot);
+      if (bookings.length === 0) {
+        const noReservationsRow = `<tr> <td colspan="5" style="text-align: center;">You don't have any reservations</td></tr>`;
+        tableBody.append(noReservationsRow);
+      } else {
+        bookings.forEach((booking) => {
+          const bookingDate = new Date(booking.date);
+          const bookingTime = new Date(booking.timeSlot);
 
-        // Check if the booking date and time are in the past
-        const isPastBooking =
-          bookingDate < currentDate ||
-          (bookingDate.getTime() === currentDate.getTime() &&
-            bookingTime < currentDate);
+          // Check if the booking date and time are in the past
+          const isPastBooking =
+            bookingDate < currentDate ||
+            (bookingDate.getTime() === currentDate.getTime() &&
+              bookingTime < currentDate);
 
-        const row = `
+          const row = `
         <tr>
           <td>${booking.laboratoryNumber}</td>
           <td>${booking.seatNumber}</td>
@@ -42,8 +46,9 @@ $(document).ready(function () {
           </td>
         </tr>
       `;
-        tableBody.append(row);
-      });
+          tableBody.append(row);
+        });
+      }
 
       // Add event listeners for edit and cancel buttons
       addButtonEventListeners();
