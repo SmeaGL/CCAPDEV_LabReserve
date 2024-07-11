@@ -36,12 +36,16 @@ $(document).ready(function () {
             ${
               isPastBooking
                 ? `<p class="reserveComplete">Reservation Completed!</p>`
-                : `<button class="edit_button" data-id="${booking._id}">Edit</button>`
-            }
-            ${
-              isPastBooking
-                ? ""
-                : `<button class="cancel_button" data-id="${booking._id}">Cancel</button>`
+                : `<button class="edit_button" data-id="${
+                    booking._id
+                  }">Edit</button>
+                   <button class="cancel_button"
+                    data-seat-number="${booking.seatNumber}"
+                    data-lab-number="${booking.laboratoryNumber}"
+                    data-booking-date="${
+                      bookingDate.toISOString().split("T")[0]
+                    }"
+                    data-timeslot="${booking.timeSlot}">Cancel</button>`
             }
           </td>
         </tr>
@@ -65,13 +69,38 @@ $(document).ready(function () {
       window.location.href = "/reserveSlot";
     }
 
-    function handleCancelClick(event) {
+    async function handleCancelClick(event) {
       const userConfirmed = confirm("Are you sure you want to cancel?");
       if (userConfirmed) {
-        alert("Reservation cancelled successfully.");
-        // Here you would typically send a request to the server to actually cancel the reservation
-        // After successful cancellation, you might want to refresh the bookings list
-        fetchAndDisplayBookings();
+        const button = event.currentTarget;
+
+        // Retrieve data attributes from the button
+        const seatNumber = button.getAttribute("data-seat-number");
+        const labNumber = button.getAttribute("data-lab-number");
+        const bookingDate = button.getAttribute("data-booking-date");
+        const timeslot = button.getAttribute("data-timeslot");
+
+        console.log(seatNumber);
+        console.log(labNumber);
+        console.log(bookingDate);
+        console.log(timeslot);
+        try {
+          const queryString = `?seatNumber=${seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&timeslot=${timeslot}`;
+          const response = await fetch("/api/cancelbooking" + queryString, {
+            method: "POST",
+          });
+
+          if (response.ok) {
+            alert("Reservation cancelled successfully.");
+            // Refresh bookings list
+            fetchAndDisplayBookings();
+          } else {
+            throw new Error("Failed to cancel booking");
+          }
+        } catch (error) {
+          console.error("Error cancelling booking:", error);
+          alert("Failed to cancel booking. Please try again later.");
+        }
       }
     }
 

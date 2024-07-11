@@ -5,7 +5,13 @@ const bodyParser = require("body-parser");
 const app = express();
 const router = express.Router();
 
-const { userProfileModel } = require("../laboratorySchema");
+const {
+  DateModel,
+  LaboratoryNumber,
+  TimeSlot,
+  SeatStatus,
+  userProfileModel,
+} = require("../laboratorySchema");
 
 router.get("/getRoomSeatDateTime", async (req, res) => {
   const email = req.session.user.email;
@@ -80,14 +86,11 @@ router.get("/getRoomSeatDateTime", async (req, res) => {
 
 router.post("/cancelbooking", async (req, res) => {
   const { seatNumber, labNumber, bookingDate, timeslot } = req.query;
-
-  // Accessing user information from session (optional for cancellation, depends on your authentication flow)
   const bookerEmail = req.session.user.email;
 
   try {
     const queryDate = new Date(bookingDate);
     queryDate.setUTCHours(12, 0, 0, 0);
-
     // Find the date document for the specified date
     const dateDoc = await DateModel.findOne({
       date: {
@@ -100,6 +103,7 @@ router.post("/cancelbooking", async (req, res) => {
       return res.status(404).json({ message: "Date not found" });
     }
 
+    // Find the laboratory document
     const laboratory = await LaboratoryNumber.findOne({
       laboratoryNumber: labNumber,
       date: dateDoc._id,
@@ -116,9 +120,11 @@ router.post("/cancelbooking", async (req, res) => {
       return res.status(404).json({ message: "Laboratory not found" });
     }
 
+    // Find the specific time slot and seat status
     const timeSlot = laboratory.timeSlots.find(
       (slot) => slot.timeSlot === timeslot
     );
+
     if (!timeSlot) {
       return res.status(404).json({ message: "Time slot not found" });
     }
@@ -139,12 +145,10 @@ router.post("/cancelbooking", async (req, res) => {
     const cancelledSeatStatus = await seatStatus.save();
 
     // Remove reference from user's profile
-    if (bookerEmail) {
-      await userProfileModel.updateOne(
-        { email: bookerEmail },
-        { $pull: { bookings: seatStatus._id } }
-      );
-    }
+    await userProfileModel.updateOne(
+      { email: bookerEmail },
+      { $pull: { bookings: seatStatus._id } }
+    );
 
     res
       .status(200)
