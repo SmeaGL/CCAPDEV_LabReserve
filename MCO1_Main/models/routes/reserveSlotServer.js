@@ -10,6 +10,7 @@ const {
   LaboratoryNumber,
   TimeSlot,
   SeatStatus,
+  userProfileModel,
 } = require("../laboratorySchema");
 
 const PORT = process.env.PORT || 3000;
@@ -180,8 +181,12 @@ router.post("/confirm-booking", async (req, res) => {
 
     seatStatus.status = "Booked";
     seatStatus.info = { bookerName, bookerEmail, bookingDate, requestTime };
-    console.log(bookerName + bookerName);
     const updatedSeatStatus = await seatStatus.save();
+
+    await userProfileModel.updateOne(
+      { email: bookerEmail },
+      { $push: { bookings: seatStatus._id } }
+    );
 
     res
       .status(200)

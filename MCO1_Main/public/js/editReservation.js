@@ -1,22 +1,69 @@
-document.addEventListener("DOMContentLoaded", function () {
-  function handleEditClick(event) {
-    window.location.href = "/reserveSlot";
-  }
+$(document).ready(function () {
+  async function fetchAndDisplayBookings() {
+    try {
+      const response = await fetch("/api/getRoomSeatDateTime");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const bookings = await response.json();
 
-  function handleCancelClick(event) {
-    const userConfirmed = confirm("Are you sure you want to cancel?");
-    if (userConfirmed) {
-      alert("Reservation cancelled successfully.");
+      const tableBody = $(".lab_reservations tbody");
+      tableBody.empty(); // Clear existing rows
+
+      bookings.forEach((booking) => {
+        const row = `
+          <tr>
+            <td>${booking.laboratoryNumber}</td>
+            <td>${booking.seatNumber}</td>
+            <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
+            <td>${booking.timeSlot}</td>
+            <td class="button-cell">
+              <button class="edit_button" data-id="${booking._id}">Edit</button>
+              <button class="cancel_button" data-id="${
+                booking._id
+              }">Cancel</button>
+            </td>
+          </tr>
+        `;
+        tableBody.append(row);
+      });
+
+      // Add event listeners for edit and cancel buttons
+      addButtonEventListeners();
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      $(".lab-reservations tbody").html(
+        '<tr><td colspan="5">Error fetching bookings. Please try again later.</td></tr>'
+      );
     }
   }
 
-  const editButtons = document.querySelectorAll(".edit_button");
-  editButtons.forEach((button) => {
-    button.addEventListener("click", handleEditClick);
-  });
+  function addButtonEventListeners() {
+    function handleEditClick(event) {
+      window.location.href = "/reserveSlot";
+    }
 
-  const cancelButtons = document.querySelectorAll(".cancel_button");
-  cancelButtons.forEach((button) => {
-    button.addEventListener("click", handleCancelClick);
-  });
+    function handleCancelClick(event) {
+      const userConfirmed = confirm("Are you sure you want to cancel?");
+      if (userConfirmed) {
+        alert("Reservation cancelled successfully.");
+        // Here you would typically send a request to the server to actually cancel the reservation
+        // After successful cancellation, you might want to refresh the bookings list
+        fetchAndDisplayBookings();
+      }
+    }
+
+    const editButtons = document.querySelectorAll(".edit_button");
+    editButtons.forEach((button) => {
+      button.addEventListener("click", handleEditClick);
+    });
+
+    const cancelButtons = document.querySelectorAll(".cancel_button");
+    cancelButtons.forEach((button) => {
+      button.addEventListener("click", handleCancelClick);
+    });
+  }
+
+  // Initial fetch and display of bookings
+  fetchAndDisplayBookings();
 });

@@ -333,7 +333,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border: 1px solid #000000;
-  width: 350px;
+  min-height: 525px;
+  min-width: 350px;
+  width: auto;
   height: auto;
   border-radius: 10px;
   padding-left: 15px;
