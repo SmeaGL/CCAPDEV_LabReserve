@@ -47,14 +47,28 @@ router.get("/getRoomSeatDateTime", async (req, res) => {
     });
 
     bookings.sort((a, b) => {
+      // Sort by date
       const dateComparison = new Date(b.date) - new Date(a.date);
       if (dateComparison !== 0) {
         return dateComparison;
       }
-      return a.timeSlot.localeCompare(b.timeSlot);
+
+      // Sort by time slot
+      const timeSlotComparison = b.timeSlot.localeCompare(a.timeSlot);
+      if (timeSlotComparison !== 0) {
+        return timeSlotComparison;
+      }
+
+      // Sort by room number
+      const roomNumberComparison = a.laboratoryNumber - b.laboratoryNumber;
+      if (roomNumberComparison !== 0) {
+        return roomNumberComparison;
+      }
+
+      // Sort by seat number
+      return a.seatNumber - b.seatNumber;
     });
 
-    console.log(bookings);
     res.json(bookings);
   } catch (error) {
     console.error("Error retrieving user bookings:", error);

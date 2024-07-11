@@ -148,6 +148,7 @@ router.post("/confirm-booking", async (req, res) => {
   // Accessing user information from session
   const bookerName = req.session.user.username;
   const bookerEmail = req.session.user.email;
+  const timeslot = req.query.timeslot;
 
   try {
     const queryDate = new Date(bookingDate);
@@ -165,6 +166,7 @@ router.post("/confirm-booking", async (req, res) => {
       date: dateDoc._id,
     }).populate({
       path: "timeSlots",
+      match: { timeSlot: timeslot },
       populate: {
         path: "seatStatuses",
         match: { seatNumber: seatNumber, status: "Available" },

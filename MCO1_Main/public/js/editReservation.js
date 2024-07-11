@@ -10,21 +10,38 @@ $(document).ready(function () {
       const tableBody = $(".lab_reservations tbody");
       tableBody.empty(); // Clear existing rows
 
+      const currentDate = new Date();
+
       bookings.forEach((booking) => {
+        const bookingDate = new Date(booking.date);
+        const bookingTime = new Date(booking.timeSlot);
+
+        // Check if the booking date and time are in the past
+        const isPastBooking =
+          bookingDate < currentDate ||
+          (bookingDate.getTime() === currentDate.getTime() &&
+            bookingTime < currentDate);
+
         const row = `
-          <tr>
-            <td>${booking.laboratoryNumber}</td>
-            <td>${booking.seatNumber}</td>
-            <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
-            <td>${booking.timeSlot}</td>
-            <td class="button-cell">
-              <button class="edit_button" data-id="${booking._id}">Edit</button>
-              <button class="cancel_button" data-id="${
-                booking._id
-              }">Cancel</button>
-            </td>
-          </tr>
-        `;
+        <tr>
+          <td>${booking.laboratoryNumber}</td>
+          <td>${booking.seatNumber}</td>
+          <td>${bookingDate.toISOString().split("T")[0]}</td>
+          <td>${booking.timeSlot}</td>
+          <td class="button-cell">
+            ${
+              isPastBooking
+                ? `<p class="reserveComplete">Reservation Completed!</p>`
+                : `<button class="edit_button" data-id="${booking._id}">Edit</button>`
+            }
+            ${
+              isPastBooking
+                ? ""
+                : `<button class="cancel_button" data-id="${booking._id}">Cancel</button>`
+            }
+          </td>
+        </tr>
+      `;
         tableBody.append(row);
       });
 
