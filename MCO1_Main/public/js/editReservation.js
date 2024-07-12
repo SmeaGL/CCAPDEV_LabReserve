@@ -18,38 +18,50 @@ $(document).ready(function () {
       } else {
         bookings.forEach((booking) => {
           const bookingDate = new Date(booking.date);
-          const bookingTime = new Date(booking.timeSlot);
+          const bookingTime = booking.timeSlot.split(" - ")[1]; // Extract end time, which is 17:45
+          const [hours, minutes] = bookingTime.split(":").map(Number);
 
-          // Check if the booking date and time are in the past
-          const isPastBooking =
-            bookingDate < currentDate ||
-            (bookingDate.getTime() === currentDate.getTime() &&
-              bookingTime < currentDate);
+          bookingDate.setHours(hours, minutes);
+          const currentDate = new Date();
+          const isPastBooking = bookingDate < currentDate;
+          console.log(isPastBooking);
+
+          // Check if the booking is currently ongoing
+          const startTime = booking.timeSlot.split(" - ")[0];
+          const [startHours, startMinutes] = startTime.split(":").map(Number);
+          const bookingStartDate = new Date(booking.date);
+          bookingStartDate.setHours(startHours, startMinutes);
+
+          const isOngoingBooking =
+            bookingStartDate <= currentDate && bookingDate >= currentDate;
+          console.log(isOngoingBooking);
 
           const row = `
-        <tr>
-          <td>${booking.laboratoryNumber}</td>
-          <td>${booking.seatNumber}</td>
-          <td>${bookingDate.toISOString().split("T")[0]}</td>
-          <td>${booking.timeSlot}</td>
-          <td class="button-cell">
-            ${
-              isPastBooking
-                ? `<p class="reserveComplete">Reservation Completed!</p>`
-                : `<button class="edit_button" data-id="${
-                    booking._id
-                  }">Edit</button>
-                   <button class="cancel_button"
-                    data-seat-number="${booking.seatNumber}"
-                    data-lab-number="${booking.laboratoryNumber}"
-                    data-booking-date="${
-                      bookingDate.toISOString().split("T")[0]
-                    }"
-                    data-timeslot="${booking.timeSlot}">Cancel</button>`
-            }
-          </td>
-        </tr>
-      `;
+          <tr>
+            <td>${booking.laboratoryNumber}</td>
+            <td>${booking.seatNumber}</td>
+            <td>${bookingDate.toISOString().split("T")[0]}</td>
+            <td>${booking.timeSlot}</td>
+            <td class="button-cell">
+              ${
+                isPastBooking
+                  ? `<p class="reserveComplete">Reservation Completed!</p>`
+                  : isOngoingBooking
+                  ? `<p class="reserveComplete">In Progress</p>`
+                  : `<button class="edit_button" data-id="${
+                      booking._id
+                    }">Edit</button>
+                      <button class="cancel_button"
+                        data-seat-number="${booking.seatNumber}"
+                        data-lab-number="${booking.laboratoryNumber}"
+                        data-booking-date="${
+                          bookingDate.toISOString().split("T")[0]
+                        }"
+                        data-timeslot="${booking.timeSlot}">Cancel</button>`
+              }
+            </td>
+          </tr>
+          `;
           tableBody.append(row);
         });
       }
@@ -80,10 +92,6 @@ $(document).ready(function () {
         const bookingDate = button.getAttribute("data-booking-date");
         const timeslot = button.getAttribute("data-timeslot");
 
-        console.log(seatNumber);
-        console.log(labNumber);
-        console.log(bookingDate);
-        console.log(timeslot);
         try {
           const queryString = `?seatNumber=${seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&timeslot=${timeslot}`;
           const response = await fetch("/api/cancelbooking" + queryString, {

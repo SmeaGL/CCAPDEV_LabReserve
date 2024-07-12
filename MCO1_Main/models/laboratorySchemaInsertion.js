@@ -24,10 +24,10 @@ db.once("open", async () => {
     await SeatStatus.deleteMany({});
 
     const userAdmin = await userProfileModel.create({
-      username : "admin",
-      email : "admin@dlsu.edu.ph",
-      password : await bcrypt.hash("admin", 10),
-      userType : "faculty",
+      username: "admin",
+      email: "admin@dlsu.edu.ph",
+      password: await bcrypt.hash("admin", 10),
+      userType: "faculty",
     });
 
     const labNumbers = ["G301", "G302", "G303A", "G303B"];
