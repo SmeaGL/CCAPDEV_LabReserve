@@ -5,6 +5,7 @@ const userProfile = new Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  description: { type: String, required: true },
   userType: { type: String, required: true },
   bookings: [
     {

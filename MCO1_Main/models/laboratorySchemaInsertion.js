@@ -28,6 +28,7 @@ db.once("open", async () => {
       email: "admin@dlsu.edu.ph",
       password: await bcrypt.hash("admin", 10),
       userType: "faculty",
+      description: "No Description.",
     });
 
     const labNumbers = ["G301", "G302", "G303A", "G303B"];
