@@ -444,26 +444,39 @@ function initializeCalendarAndReservations() {
   ) {
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
-    // changep profile link to user
+
+    // Construct the HTML for booking information
     bookingInfo.html(`
-      
-      <span class="bookingLine">Booker Name: 
-        <a href="/profile" class="bookingInfoValue">${bookerName}</a> 
-      </span><br>
-      <span class="bookingLine">Booker Email: <span class="bookingInfoValue">${bookerEmail}</span></span><br>
-      <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${
-        slot.seatNumber
-      }</span></span><br>
-      <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${labNumber}</span></span><br>
-      <span class="bookingLine">Request Time : <span class="bookingInfoValue">${requestTime}</span></span><br>
-      <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span><br>
-      ${
-        isConfirmed
-          ? '<span class="bookingLine"><span class="bookingConfirmed">Booking Confirmed!</span></span><br>'
-          : ""
-      }
-    `);
+    <span class="bookingLine">Booker Name: 
+      <a href="#" class="bookingInfoValue bookerProfileLink" data-email="${bookerEmail}">${bookerName}</a> 
+    </span><br>
+    <span class="bookingLine">Booker Email: <span class="bookingInfoValue">${bookerEmail}</span></span><br>
+    <span class="bookingLine">Seat Number : <span class="bookingInfoValue">${
+      slot.seatNumber
+    }</span></span><br>
+    <span class="bookingLine">Laboratory : <span class="bookingInfoValue">${labNumber}</span></span><br>
+    <span class="bookingLine">Request Time : <span class="bookingInfoValue">${requestTime}</span></span><br>
+    <span class="bookingLine">Booking Date : <span class="bookingInfoValue">${bookingDate}</span></span><br>
+    ${
+      isConfirmed
+        ? '<span class="bookingLine"><span class="bookingConfirmed">Booking Confirmed!</span></span><br>'
+        : ""
+    }
+  `);
+
+    // Show the overlay
     overlay.show();
+
+    // Click event handler for bookerProfileLink class
+    $(".bookerProfileLink").on("click", function (event) {
+      event.preventDefault();
+      const email = $(this).data("email");
+      redirectToProfile(email);
+    });
+  }
+
+  async function redirectToProfile(email) {
+    window.location.href = "/profile";
   }
 
   // Event listener for changes in the selected lab

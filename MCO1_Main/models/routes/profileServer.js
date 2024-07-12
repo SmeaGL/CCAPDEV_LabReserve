@@ -31,7 +31,6 @@ router.get("/publicProfile", async (req, res) => {
 router.get("/userProfileOther", async (req, res) => {
   try {
     const email = req.query.email;
-    console.log("server" + email);
     const userProfile = await userProfileModel.findOne({ email });
 
     if (!userProfile) {
@@ -54,7 +53,7 @@ router.get("/userProfileOther", async (req, res) => {
 // New route to fetch bookings by email
 router.get("/getRoomSeatDateTimeOther", async (req, res) => {
   const email = req.query.email;
-  console.log("server" + email);
+
   try {
     // Find the user profile
     const userProfile = await userProfileModel.findOne({ email }).populate({

@@ -2,7 +2,6 @@ $(document).ready(function () {
   async function fetchUserProfile(email) {
     try {
       const response = await fetch(`/api/userProfileOther?email=${email}`);
-      console.log(email);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -22,7 +21,6 @@ $(document).ready(function () {
       const response = await fetch(
         `/api/getRoomSeatDateTimeOther?email=${email}`
       );
-      console.log(email);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -91,7 +89,6 @@ $(document).ready(function () {
     async function (event) {
       event.preventDefault();
       const email = $(this).data("email");
-      console.log(email);
       try {
         await fetchUserProfile(email);
         await fetchAndDisplayBookings(email);
@@ -101,22 +98,26 @@ $(document).ready(function () {
     }
   );
 
-  async function fetchUserProfileAndBookings() {
+  async function fetchUserProfileAndBookings(email = null) {
     try {
-      const response = await fetch("api/userProfile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "same-origin",
-      });
+      if (!email) {
+        const response = await fetch("api/userProfile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "same-origin",
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch user profile");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+
+        const userData = await response.json();
+        email = userData.email; // Assign fetched email to variable
       }
 
-      const userData = await response.json();
-      const { email } = userData;
+      // Now email is guaranteed to be valid
       await fetchUserProfile(email);
       await fetchAndDisplayBookings(email);
     } catch (error) {

@@ -62,9 +62,7 @@ $(document).ready(function () {
                   ? `<p class="reserveComplete">Reservation Completed!</p>`
                   : isOngoingBooking
                   ? `<p class="reserveComplete">In Progress</p>`
-                  : `<button class="edit_button" data-id="${
-                      booking._id
-                    }">Edit</button>
+                  : `
                       <button class="cancel_button"
                         data-seat-number="${booking.seatNumber}"
                         data-lab-number="${booking.laboratoryNumber}"
