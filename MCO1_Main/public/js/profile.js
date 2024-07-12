@@ -1,7 +1,8 @@
 $(document).ready(function () {
-  async function fetchUserProfile() {
+  async function fetchUserProfile(email) {
     try {
-      const response = await fetch("/api/userProfile");
+      const response = await fetch(`/api/userProfileOther?email=${email}`);
+      console.log(email);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -13,13 +14,15 @@ $(document).ready(function () {
       $(".user-description").text(userData.description);
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      // Handle errors here
     }
   }
 
-  async function fetchAndDisplayBookings() {
+  async function fetchAndDisplayBookings(email) {
     try {
-      const response = await fetch("/api/getRoomSeatDateTime");
+      const response = await fetch(
+        `/api/getRoomSeatDateTimeOther?email=${email}`
+      );
+      console.log(email);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -29,25 +32,20 @@ $(document).ready(function () {
       tableBody.empty(); // Clear existing rows
 
       if (bookings.length === 0) {
-        const noReservationsRow = `<tr> <td colspan="5" style="text-align: center;">You don't have any reservations</td></tr>`;
+        const noReservationsRow = `<tr><td colspan="5" style="text-align: center;">No reservation records.</td></tr>`;
         tableBody.append(noReservationsRow);
       } else {
         bookings.forEach((booking) => {
           const row = `
-          <tr>
-            <td>${booking.laboratoryNumber}</td>
-            <td>${booking.seatNumber}</td>
-            <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
-            <td>${booking.timeSlot}</td>
-           
-          </tr>
-        `;
+                <tr>
+                  <td>${booking.laboratoryNumber}</td>
+                  <td>${booking.seatNumber}</td>
+                  <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
+                  <td>${booking.timeSlot}</td>
+                </tr>`;
           tableBody.append(row);
         });
       }
-
-      // Add event listeners for edit and cancel buttons
-      addButtonEventListeners();
     } catch (error) {
       console.error("Error fetching bookings:", error);
       $(".lab-reservations tbody").html(
@@ -56,59 +54,76 @@ $(document).ready(function () {
     }
   }
 
-  function addButtonEventListeners() {
-    function handleEditClick(event) {
-      window.location.href = "/reserveSlot";
-    }
+  async function fetchAndDisplayPublicProfile() {
+    try {
+      const response = await fetch("/api/publicProfile");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-    function handleCancelClick(event) {
-      const userConfirmed = confirm("Are you sure you want to cancel?");
-      if (userConfirmed) {
-        alert("Reservation cancelled successfully.");
-        // Here you would typically send a request to the server to actually cancel the reservation
-        // After successful cancellation, you might want to refresh the bookings list
-        fetchAndDisplayBookings();
+      const allProfiles = await response.json();
+
+      const tableBody = $(".public-profile tbody");
+      tableBody.empty(); // Clear existing rows
+
+      if (allProfiles.length === 0) {
+        const noProfilesRow = `<tr><td colspan="2" style="text-align: center;">No Profiles Available</td></tr>`;
+        tableBody.append(noProfilesRow);
+      } else {
+        allProfiles.forEach((profile) => {
+          const row = `
+        <tr>
+          <td><a href="#" class="profile-link" data-email="${profile.email}">${profile.email}</a></td>
+          <td>${profile.username}</td>
+        </tr>`;
+          tableBody.append(row);
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching or displaying profiles:", error);
+    }
+  }
+
+  // Add this outside of fetchAndDisplayPublicProfile, but inside the $(document).ready function
+  $(".public-profile tbody").on(
+    "click",
+    ".profile-link",
+    async function (event) {
+      event.preventDefault();
+      const email = $(this).data("email");
+      console.log(email);
+      try {
+        await fetchUserProfile(email);
+        await fetchAndDisplayBookings(email);
+      } catch (error) {
+        console.error("Error fetching profile and bookings:", error);
       }
     }
+  );
 
-    const editButtons = document.querySelectorAll(".edit_button");
-    editButtons.forEach((button) => {
-      button.addEventListener("click", handleEditClick);
-    });
-
-    const cancelButtons = document.querySelectorAll(".cancel_button");
-    cancelButtons.forEach((button) => {
-      button.addEventListener("click", handleCancelClick);
-    });
-  }
-
-  // Initial fetch and display of bookings
-  fetchUserProfile();
-  fetchAndDisplayBookings();
-
-  async function fecthAndDisplayPublicProfile() {
-    const response = await fetch("/api/publicProfile");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const allProfile = await response.json();
-
-    const tableBody = $(".public-profile tbody");
-    tableBody.empty(); // Clear existing rows
-
-    if (allProfile.length === 0) {
-      const noProfilesRow = `<tr> <td colspan="5" style="text-align: center;">No Profiles Available</td></tr>`;
-      tableBody.append(noProfilesRow);
-    } else {
-      allProfile.forEach((profile) => {
-        const row = `
-        <tr>
-          <td>${profile.username}</td>
-          <td>${profile.email}</td>
-        </tr>`;
-        tableBody.append(row);
+  async function fetchUserProfileAndBookings() {
+    try {
+      const response = await fetch("api/userProfile", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const userData = await response.json();
+      const { email } = userData;
+      await fetchUserProfile(email);
+      await fetchAndDisplayBookings(email);
+    } catch (error) {
+      console.error("Error fetching user profile and bookings:", error);
     }
   }
+
+  fetchUserProfileAndBookings();
+  fetchAndDisplayPublicProfile();
 });

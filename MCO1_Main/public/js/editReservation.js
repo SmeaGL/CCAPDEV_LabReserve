@@ -7,13 +7,11 @@ $(document).ready(function () {
       }
       const userData = await response.json();
 
-      // Update user information in the HTML
       $(".user-name").text(userData.name);
       $(".user-email").text(userData.email);
       $(".user-description").text(userData.description);
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      // Handle errors here
     }
   }
 
@@ -42,7 +40,6 @@ $(document).ready(function () {
           bookingDate.setHours(hours, minutes);
           const currentDate = new Date();
           const isPastBooking = bookingDate < currentDate;
-          console.log(isPastBooking);
 
           // Check if the booking is currently ongoing
           const startTime = booking.timeSlot.split(" - ")[0];
@@ -52,7 +49,6 @@ $(document).ready(function () {
 
           const isOngoingBooking =
             bookingStartDate <= currentDate && bookingDate >= currentDate;
-          console.log(isOngoingBooking);
 
           const row = `
           <tr>
@@ -117,7 +113,6 @@ $(document).ready(function () {
           });
 
           if (response.ok) {
-            alert("Reservation cancelled successfully.");
             // Refresh bookings list
             fetchAndDisplayBookings();
           } else {

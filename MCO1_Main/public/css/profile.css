@@ -127,3 +127,9 @@ th {
 .navbar {
   z-index: 2;
 }
+
+.profile-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}

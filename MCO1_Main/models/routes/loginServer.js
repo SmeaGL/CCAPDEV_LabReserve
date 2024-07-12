@@ -21,12 +21,10 @@ router.post("/register", async (req, res) => {
   try {
     // Checks if username or email is already in use
     const existingUser = await userProfileModel.findOne({
-      $or: [{ username }, { email }],
+      $or: { email },
     });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: "Username or Email already in use" });
+      return res.status(400).json({ error: "Email already in use" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -37,6 +35,7 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
       userType,
+      description: "No Description.",
     });
 
     await newUser.save();
@@ -72,6 +71,7 @@ router.post("/login", async (req, res) => {
       name: user.name,
       email: user.email,
       userType: user.userType,
+      description: user.description,
     };
 
     res.cookie("sessionId", req.sessionID, { httpOnly: true });

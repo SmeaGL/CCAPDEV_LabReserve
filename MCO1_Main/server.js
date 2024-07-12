@@ -7,6 +7,7 @@ const path = require("path");
 const routesRes = require("./models/routes/reserveSlotServer");
 const routesLog = require("./models/routes/loginServer");
 const routesEdit = require("./models/routes/editReservationServer");
+const routesProfile = require("./models/routes/profileServer");
 
 const app = express();
 
@@ -52,6 +53,7 @@ mongoose.connect("mongodb://localhost/CCAPDEV", {
 app.use("/api", routesRes);
 app.use("/api", routesLog);
 app.use("/api", routesEdit);
+app.use("/api", routesProfile);
 
 function isAuthenticated(req, res, next) {
   if (req.session.user) {

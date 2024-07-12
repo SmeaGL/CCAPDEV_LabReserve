@@ -56,8 +56,15 @@ $(document).ready(function () {
         }
 
         const username = response.user.username;
+        const usernameParts = username.split(" ");
+        const processedUsername =
+          usernameParts.length > 1
+            ? usernameParts.slice(0, 1).concat(usernameParts.slice(2)).join(" ")
+            : username;
+
+        // Creating and appending the welcome message with processed username
         const welcomeMessage = $('<div id="welcome-message">')
-          .html(`<p>Welcome, ${username}!</p>`)
+          .html(`<p>Welcome, ${processedUsername}!</p>`)
           .hide()
           .appendTo("body");
 
