@@ -37,7 +37,6 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
       userType,
-      description: "No Description.",
     });
 
     await newUser.save();
@@ -73,7 +72,6 @@ router.post("/login", async (req, res) => {
       name: user.name,
       email: user.email,
       userType: user.userType,
-      description: user.description,
     };
 
     res.cookie("sessionId", req.sessionID, { httpOnly: true });

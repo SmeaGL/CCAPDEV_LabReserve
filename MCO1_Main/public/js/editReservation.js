@@ -1,4 +1,22 @@
 $(document).ready(function () {
+  async function fetchUserProfile() {
+    try {
+      const response = await fetch("/api/userProfile");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const userData = await response.json();
+
+      // Update user information in the HTML
+      $(".user-name").text(userData.name);
+      $(".user-email").text(userData.email);
+      $(".user-description").text(userData.description);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      // Handle errors here
+    }
+  }
+
   async function fetchAndDisplayBookings() {
     try {
       const response = await fetch("/api/getRoomSeatDateTime");
@@ -124,5 +142,6 @@ $(document).ready(function () {
   }
 
   // Initial fetch and display of bookings
+  fetchUserProfile();
   fetchAndDisplayBookings();
 });

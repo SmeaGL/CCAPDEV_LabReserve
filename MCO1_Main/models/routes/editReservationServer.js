@@ -13,6 +13,32 @@ const {
   userProfileModel,
 } = require("../laboratorySchema");
 
+router.get("/userProfile", async (req, res) => {
+  try {
+    const email = req.session.user.email;
+
+    const userProfile = await userProfileModel.findOne({ email });
+
+    if (!userProfile) {
+      return res.status(404).json({ error: "User profile not found" });
+    }
+
+    console.log("Retrieved user profile:", userProfile);
+
+    const userData = {
+      email: userProfile.email,
+      name: userProfile.username,
+      description: userProfile.description,
+    };
+
+    console.log("Processed user data:", userData);
+    res.json(userData);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/getRoomSeatDateTime", async (req, res) => {
   const email = req.session.user.email;
 
@@ -88,14 +114,6 @@ router.post("/cancelbooking", async (req, res) => {
   const { seatNumber, labNumber, bookingDate, timeslot } = req.query;
   const bookerEmail = req.session.user.email;
 
-  console.log("Received cancel booking request", {
-    seatNumber,
-    labNumber,
-    bookingDate,
-    timeslot,
-    bookerEmail,
-  }); // Debugging line
-
   try {
     const queryDate = new Date(bookingDate + "T00:00:00Z");
     const nextDay = new Date(queryDate);
@@ -113,9 +131,6 @@ router.post("/cancelbooking", async (req, res) => {
       return res.status(404).json({ message: "Date not found" });
     }
 
-    console.log("Date document found", dateDoc); // Debugging line
-
-    // Find the laboratory document
     const laboratory = await LaboratoryNumber.findOne({
       laboratoryNumber: labNumber,
       date: dateDoc._id,
@@ -133,8 +148,6 @@ router.post("/cancelbooking", async (req, res) => {
       return res.status(404).json({ message: "Laboratory not found" });
     }
 
-    console.log("Laboratory found with timeSlots", laboratory.timeSlots); // Debugging line
-
     // Find the specific time slot and seat status
     const timeSlot = laboratory.timeSlots.find(
       (slot) => slot.timeSlot === timeslot
@@ -143,13 +156,6 @@ router.post("/cancelbooking", async (req, res) => {
     if (!timeSlot) {
       console.log("Time slot not found"); // Debugging line
       return res.status(404).json({ message: "Time slot not found" });
-    }
-
-    console.log("Time slot found with seatStatuses", timeSlot.seatStatuses); // Debugging line
-
-    // If seatStatuses is empty, log the entire laboratory document for debugging
-    if (timeSlot.seatStatuses.length === 0) {
-      console.log("Time slot details", timeSlot);
     }
 
     const seatStatus = timeSlot.seatStatuses.find(

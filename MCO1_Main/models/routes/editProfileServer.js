@@ -25,7 +25,6 @@ router.get("/publicProfile", async (req, res) => {
   }
 });
 
-
 router.get("/Profile", async (req, res) => {
   const email = req.session.user.email;
 

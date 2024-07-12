@@ -1,4 +1,22 @@
 $(document).ready(function () {
+  async function fetchUserProfile() {
+    try {
+      const response = await fetch("/api/userProfile");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const userData = await response.json();
+
+      // Update user information in the HTML
+      $(".user-name").text(userData.name);
+      $(".user-email").text(userData.email);
+      $(".user-description").text(userData.description);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      // Handle errors here
+    }
+  }
+
   async function fetchAndDisplayBookings() {
     try {
       const response = await fetch("/api/getRoomSeatDateTime");
@@ -65,13 +83,14 @@ $(document).ready(function () {
   }
 
   // Initial fetch and display of bookings
+  fetchUserProfile();
   fetchAndDisplayBookings();
 
   async function fecthAndDisplayPublicProfile() {
     const response = await fetch("/api/publicProfile");
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
 
     const allProfile = await response.json();
 
@@ -87,10 +106,9 @@ $(document).ready(function () {
         <tr>
           <td>${profile.username}</td>
           <td>${profile.email}</td>
-        </tr>`; 
+        </tr>`;
         tableBody.append(row);
       });
-    };
-    
-  };
+    }
+  }
 });
