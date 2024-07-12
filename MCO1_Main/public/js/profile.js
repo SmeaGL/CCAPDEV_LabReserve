@@ -66,4 +66,31 @@ $(document).ready(function () {
 
   // Initial fetch and display of bookings
   fetchAndDisplayBookings();
+
+  async function fecthAndDisplayPublicProfile() {
+    const response = await fetch("/api/publicProfile");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+    const allProfile = await response.json();
+
+    const tableBody = $(".public-profile tbody");
+    tableBody.empty(); // Clear existing rows
+
+    if (allProfile.length === 0) {
+      const noProfilesRow = `<tr> <td colspan="5" style="text-align: center;">No Profiles Available</td></tr>`;
+      tableBody.append(noProfilesRow);
+    } else {
+      allProfile.forEach((profile) => {
+        const row = `
+        <tr>
+          <td>${profile.username}</td>
+          <td>${profile.email}</td>
+        </tr>`; 
+        tableBody.append(row);
+      });
+    };
+    
+  };
 });
