@@ -476,7 +476,21 @@ function initializeCalendarAndReservations() {
   }
 
   async function redirectToProfile(email) {
-    window.location.href = "/profile";
+    try {
+      const response = await fetch(`/api/userProfileOther?email=${email}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const userData = await response.json();
+      console.log(userData);
+      window.location.href = `/profile?email=${encodeURIComponent(
+        userData.email
+      )}`;
+    } catch (error) {
+      console.error("Error in fetching other profile:", error);
+    }
   }
 
   // Event listener for changes in the selected lab

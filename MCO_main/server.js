@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
 const { engine } = require("express-handlebars");
 const path = require("path");
@@ -21,7 +22,6 @@ app.engine(
     partialsDir: path.join(__dirname, "views/partials"),
   })
 );
-
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -112,17 +112,40 @@ app.get("/reserveSlot", isAuthenticated, (req, res) => {
   });
 });
 
-app.get("/profile", isAuthenticated, (req, res) => {
-  const userData = req.session.user;
-  res.render("profile", {
-    title: "Profile",
-    logo: "Profile",
-    isAuthenticated: true,
-    layout: "main",
-    style: "profile.css",
-    javascript: "profile.js",
-    userData,
-  });
+app.get("/profile", isAuthenticated, async (req, res) => {
+  try {
+    const { email } = req.query;
+    let userData;
+    const currentUserEmail = req.session.user.email; // Current logged-in user's email
+
+    if (email) {
+      const response = await fetch(
+        `http://localhost:3000/api/userProfileOther?email=${email}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile for email: ${email}`);
+      }
+
+      userData = await response.json();
+    } else {
+      userData = req.session.user;
+    }
+
+    res.render("profile", {
+      title: "Profile",
+      logo: "Profile",
+      isAuthenticated: true,
+      layout: "main",
+      style: "profile.css",
+      javascript: "profile.js",
+      userData,
+      isOwnProfile: currentUserEmail === userData.email,
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get("/editReservation", isAuthenticated, (req, res) => {

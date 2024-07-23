@@ -13,7 +13,9 @@
         <br />
         <span class="user-email"></span>
       </div>
-      <button class="delete-profile-btn">Delete Profile</button>
+      {{#if isOwnProfile}}
+        <button class="delete-profile-btn">Delete Profile</button>
+      {{/if}}
     </div>
     <div class="user-description-box">
       <p class="user-description"></p>
@@ -34,7 +36,9 @@
         <!-- Reservations will be dynamically inserted here -->
       </tbody>
     </table>
-    <button class="edit-profile-btn">Edit Profile</button>
+    {{#if isOwnProfile}}
+      <button class="edit-profile-btn">Edit Profile</button>
+    {{/if}}
   </div>
 
   <div class="container">

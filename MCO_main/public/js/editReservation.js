@@ -34,7 +34,7 @@ $(document).ready(function () {
       } else {
         bookings.forEach((booking) => {
           const bookingDate = new Date(booking.date);
-          const bookingTime = booking.timeSlot.split(" - ")[1]; // Extract end time, which is 17:45
+          const bookingTime = booking.timeSlot.split(" - ")[1];
           const [hours, minutes] = bookingTime.split(":").map(Number);
 
           bookingDate.setHours(hours, minutes);
