@@ -399,7 +399,16 @@ function initializeCalendarAndReservations() {
     }
   }
   async function confirmBooking(timeslot, seat, labNumber, date) {
-    const requestTime = new Date().toLocaleTimeString();
+    const now = new Date();
+    const requestTime = now.toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false, // Use 24-hour time format
+    });
     const bookingDate = date;
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");

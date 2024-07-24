@@ -40,6 +40,7 @@ $(document).ready(function () {
                   <td>${booking.seatNumber}</td>
                   <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
                   <td>${booking.timeSlot}</td>
+                  <td>${booking.requestTime}</td>
                 </tr>`;
           tableBody.append(row);
         });

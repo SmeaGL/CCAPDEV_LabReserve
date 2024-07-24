@@ -56,6 +56,7 @@ $(document).ready(function () {
             <td>${booking.seatNumber}</td>
             <td>${bookingDate.toISOString().split("T")[0]}</td>
             <td>${booking.timeSlot}</td>
+            <td>${booking.requestTime}</td>
             <td class="button-cell">
              ${
                isPastBooking
