@@ -159,7 +159,6 @@ function initializeCalendarAndReservations() {
       const response = await fetch(
         `/api/available-dates?year=${year}&month=${month + 1}`
       );
-      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -368,26 +367,108 @@ function initializeCalendarAndReservations() {
     });
   };
 
-  function confirmBooking(timeslot, seat, labNumber, date) {
+  // Function to know if facult or not
+  async function getUserProfile() {
+    try {
+      const emailResponse = await fetch("/api/currentUserEmail");
+
+      if (!emailResponse.ok) {
+        throw new Error(`HTTP error! Status: ${emailResponse.status}`);
+      }
+
+      const emailData = await emailResponse.json();
+      const email = emailData.email;
+
+      if (!email) {
+        throw new Error("No email found for the current user.");
+      }
+
+      const userProfileResponse = await fetch(
+        `/api/userProfileOther?email=${encodeURIComponent(email)}`
+      );
+
+      if (!userProfileResponse.ok) {
+        throw new Error(`HTTP error! Status: ${userProfileResponse.status}`);
+      }
+
+      const userData = await userProfileResponse.json();
+      return userData;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      alert("Error fetching user profile. Please try again.");
+    }
+  }
+  async function confirmBooking(timeslot, seat, labNumber, date) {
     const requestTime = new Date().toLocaleTimeString();
     const bookingDate = date;
     const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
-    bookingInfo.html(`
-        <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
-        <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
-        <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
-        <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
-        <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
-        <button id="cancelButton">Cancel</button>
-        <button id="confirmButton">Confirm Booking</button>
+
+    try {
+      const currentUserProfile = await getUserProfile();
+      var name = currentUserProfile.name;
+      var email = currentUserProfile.email;
+      var userType = currentUserProfile.userType;
+      bookingInfo.empty();
+
+      // If the user is an admin, fetch user emails
+      if (userType === "faculty") {
+        const userResponse = await fetch("/api/getUserEmails");
+        const users = await userResponse.json();
+
+        const dropdownHtml = `
+        <span class="bookingLine">Select Email: 
+          <select id="userDropdown">
+            <option value="${currentUserProfile.email}">${
+          currentUserProfile.email
+        }</option>
+            ${users
+              .filter((user) => user.email !== currentUserProfile.email)
+              .map(
+                (user) => `
+                <option value="${user.email}" data-name="${user.name}">
+                  ${user.email}
+                </option>
+              `
+              )
+              .join("")}
+          </select>
+        </span><br>
+      `;
+
+        bookingInfo.append(dropdownHtml);
+        $("#userDropdown").on("change", function () {
+          const selectedOption = $(this).find("option:selected");
+          email = selectedOption.val();
+          name = selectedOption.data("name");
+        });
+      }
+
+      bookingInfo.append(`
+      <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
+      <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
+      <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
+      <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
+      <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
+      <button id="cancelButton">Cancel</button>
+      <button id="confirmButton">Confirm Booking</button>
     `);
+    } catch (error) {
+      console.error("Error fetching user profiles:", error);
+      bookingInfo.append(
+        "<p>Error loading user information. Please try again later.</p>"
+      );
+    }
 
     overlay.show();
 
     $("#confirmButton").on("click", async function () {
       try {
-        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
+        const queryString = `?timeslot=${timeslot}&seatNumber=${
+          seat.seatNumber
+        }&labNumber=${labNumber}&bookingDate=${bookingDate}&requestTime=${requestTime}&bookerEmail=${encodeURIComponent(
+          email
+        )}&bookerName=${encodeURIComponent(name)}`;
         const response = await fetch("/api/confirm-booking" + queryString, {
           method: "POST",
           headers: {
@@ -484,7 +565,6 @@ function initializeCalendarAndReservations() {
       }
 
       const userData = await response.json();
-      console.log(userData);
       window.location.href = `/profile?email=${encodeURIComponent(
         userData.email
       )}`;

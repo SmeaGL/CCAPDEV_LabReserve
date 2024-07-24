@@ -338,6 +338,7 @@
   width: auto;
   height: auto;
   border-radius: 10px;
+  padding-right: 20px;
   padding-left: 15px;
 }
 
@@ -412,4 +413,19 @@
 #confirmButton:hover,
 #cancelButton:hover {
   opacity: 0.8;
+}
+
+#userDropdown {
+  width: auto;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 15px;
+  color: black;
+}
+
+#userDropdown:focus {
+  border-color: #007bff;
+  outline: none;
 }

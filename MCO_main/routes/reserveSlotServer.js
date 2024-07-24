@@ -143,12 +143,17 @@ router.get("/seat-statuses", async (req, res) => {
 });
 
 router.post("/confirm-booking", async (req, res) => {
-  const { seatNumber, labNumber, bookingDate, requestTime } = req.query;
+  const {
+    seatNumber,
+    labNumber,
+    bookingDate,
+    requestTime,
+    bookerName,
+    bookerEmail,
+    timeslot,
+  } = req.query;
 
-  // Accessing user information from session
-  const bookerName = req.session.user.username;
-  const bookerEmail = req.session.user.email;
-  const timeslot = req.query.timeslot;
+  // session values if query values are not provided
 
   try {
     const queryDate = new Date(bookingDate);
@@ -198,6 +203,34 @@ router.post("/confirm-booking", async (req, res) => {
     res
       .status(500)
       .json({ message: "Internal server error", details: error.message });
+  }
+});
+
+router.get("/getUserEmails", async (req, res) => {
+  try {
+    const users = await userProfileModel
+      .find({}, "email username description userType")
+      .sort({ email: 1 });
+
+    const userData = users.map((userProfile) => ({
+      email: userProfile.email,
+      name: userProfile.username,
+      description: userProfile.description,
+      userType: userProfile.userType,
+    }));
+
+    res.json(userData);
+  } catch (error) {
+    console.error("Error fetching user emails:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/currentUserEmail", (req, res) => {
+  if (req.session && req.session.user && req.session.user.email) {
+    res.json({ email: req.session.user.email });
+  } else {
+    res.status(401).json({ error: "Not authenticated" });
   }
 });
 
