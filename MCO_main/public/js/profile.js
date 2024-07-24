@@ -82,7 +82,7 @@ $(document).ready(function () {
     }
   }
 
-  // Add this outside of fetchAndDisplayPublicProfile, but inside the $(document).ready function
+  // Get pother pfoile.
   $(".public-profile tbody").on(
     "click",
     ".profile-link",
@@ -91,8 +91,7 @@ $(document).ready(function () {
       const email = $(this).data("email");
 
       try {
-        await fetchUserProfile(email);
-        await fetchAndDisplayBookings(email);
+        window.location.href = `/profile?email=${encodeURIComponent(email)}`;
       } catch (error) {
         console.error("Error fetching profile and bookings:", error);
       }
