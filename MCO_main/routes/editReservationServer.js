@@ -38,13 +38,32 @@ router.get("/userProfile", async (req, res) => {
 
 router.get("/getRoomSeatDateTime", async (req, res) => {
   const email = req.session.user.email;
+  const all = req.query.all;
 
   try {
-    // Find the user profile
-    const userProfile = await userProfileModel.findOne({ email }).populate({
-      path: "bookings",
-      populate: [
-        {
+    let bookingsQuery;
+
+    console.log(all);
+    if (all === "true") {
+      bookingsQuery = userProfileModel
+        .find()
+        .select("username email")
+        .populate({
+          path: "bookings",
+          populate: {
+            path: "timeSlot",
+            populate: {
+              path: "laboratory",
+              populate: {
+                path: "date",
+              },
+            },
+          },
+        });
+    } else {
+      bookingsQuery = userProfileModel.findOne({ email }).populate({
+        path: "bookings",
+        populate: {
           path: "timeSlot",
           populate: {
             path: "laboratory",
@@ -53,48 +72,61 @@ router.get("/getRoomSeatDateTime", async (req, res) => {
             },
           },
         },
-      ],
-    });
-
-    if (!userProfile) {
-      return res.status(404).json({ error: "User not found" });
+      });
     }
 
-    // Construct the response
-    const bookings = userProfile.bookings.map((booking) => {
-      return {
-        date: booking.timeSlot.laboratory.date.date,
-        laboratoryNumber: booking.timeSlot.laboratory.laboratoryNumber,
-        timeSlot: booking.timeSlot.timeSlot,
-        seatNumber: booking.seatNumber,
-        status: booking.status,
-        bookerName: booking.info.bookerName,
-        bookerEmail: booking.info.bookerEmail,
-        bookingDate: booking.info.bookingDate,
-        requestTime: booking.info.requestTime,
-      };
-    });
+    const result = await bookingsQuery;
 
+    if (!result) {
+      return res.status(404).json({ error: "No users found" });
+    }
+
+    // Process bookings
+    const processBookings = (userProfile) => {
+      if (!userProfile || !userProfile.bookings) {
+        console.warn(
+          `No bookings found for user: ${
+            userProfile ? userProfile.email : "unknown"
+          }`
+        );
+        return [];
+      }
+
+      return userProfile.bookings
+        .map((booking) => {
+          return {
+            date: booking.timeSlot.laboratory.date.date,
+            laboratoryNumber: booking.timeSlot.laboratory.laboratoryNumber,
+            timeSlot: booking.timeSlot.timeSlot,
+            seatNumber: booking.seatNumber,
+            status: booking.status,
+            bookerName: booking.info?.bookerName || userProfile.username,
+            bookerEmail: booking.info?.bookerEmail || userProfile.email,
+            bookingDate: booking.info?.bookingDate,
+            requestTime: booking.info?.requestTime,
+          };
+        })
+        .filter((booking) => booking !== null);
+    };
+
+    let bookings;
+    if (all === "true") {
+      bookings = result.flatMap(processBookings);
+    } else {
+      bookings = processBookings(result);
+    }
+
+    // Sort bookings
     bookings.sort((a, b) => {
-      // Sort by date
       const dateComparison = new Date(b.date) - new Date(a.date);
-      if (dateComparison !== 0) {
-        return dateComparison;
-      }
+      if (dateComparison !== 0) return dateComparison;
 
-      // Sort by time slot
       const timeSlotComparison = b.timeSlot.localeCompare(a.timeSlot);
-      if (timeSlotComparison !== 0) {
-        return timeSlotComparison;
-      }
+      if (timeSlotComparison !== 0) return timeSlotComparison;
 
-      // Sort by room number
       const roomNumberComparison = a.laboratoryNumber - b.laboratoryNumber;
-      if (roomNumberComparison !== 0) {
-        return roomNumberComparison;
-      }
+      if (roomNumberComparison !== 0) return roomNumberComparison;
 
-      // Sort by seat number
       return a.seatNumber - b.seatNumber;
     });
 

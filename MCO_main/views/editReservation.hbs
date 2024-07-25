@@ -9,35 +9,58 @@
       />
       <div class="user-info">
         <!-- Display user's name and email dynamically -->
-        <strong class="user-name"></strong>
+        <strong class="user-name">{{userProfile.username}}</strong>
         <br />
-        <span class="user-email"></span>
+        <span class="user-email">{{userProfile.email}}</span>
       </div>
 
-      <p class="my_reservation">My Reservation</p>
-
+      <p class="my_reservation">Reservation</p>
     </div>
 
     <!-- Display user's description dynamically -->
     <div class="user-description-box">
-      <p class="user-description"></p>
+      <p class="user-description">{{userProfile.description}}</p>
     </div>
 
-    <table class="lab_reservations">
-      <thead>
+    <table class="lab_reservations" data-all="{{all}}">
+    <thead>
+      <tr>
+        <th class="narrow-column">Room</th>
+        <th class="narrow-column">Seat Number</th>
+        <th class="middle-column">Date</th>
+        <th class="middle-column">Time</th>
+        <th class="middle-column">Request Date and Time</th>
+        <th class="wide-column">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{#each bookings}}
         <tr>
-          <th>Room</th>
-          <th>Seat Number</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Request Date and Time</th>
-          <th>Action</th>
+          {{#if ../allBookings}}
+            <td class="center-text">{{bookerEmail}}</td>
+            <td class="center-text">{{bookerName}}</td>
+          {{/if}}
+          <td>{{laboratoryNumber}}</td>
+          <td>{{seatNumber}}</td>
+          <td>{{date}}</td>
+          <td>{{timeSlot}}</td>
+          <td>{{requestTime}}</td>
+          <td class="button-cell">
+            {{#if isPastBooking}}
+              <p class="reserveComplete">Reservation Completed!</p>
+            {{else if isOngoingBooking}}
+              <p class="reserveComplete">In Progress</p>
+            {{else}}
+              <button class="edit_button" data-id="{{_id}}">Edit</button>
+              <button class="cancel_button"
+                data-seat-number="{{seatNumber}}"
+                data-lab-number="{{laboratoryNumber}}"
+                data-booking-date="{{date}}"
+                data-timeslot="{{timeSlot}}">Cancel</button>
+            {{/if}}
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <tr>
-
-        </tr>
+        {{/each}}
       </tbody>
     </table>
   </div>

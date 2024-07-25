@@ -17,7 +17,28 @@ $(document).ready(function () {
 
   async function fetchAndDisplayBookings() {
     try {
-      const response = await fetch("/api/getRoomSeatDateTime");
+      // Fetch the current user profile
+      const currentUserProfile = await getUserProfile();
+      const { username, email, userType } = currentUserProfile;
+      const isFaculty = userType === "faculty";
+
+      const $table = $("table.lab_reservations");
+      $table.attr("data-all", isFaculty ? "true" : "false");
+
+      if (isFaculty) {
+        $table
+          .find(
+            "thead tr th:contains('Booker Email'), thead tr th:contains('Booker Name')"
+          )
+          .remove();
+        $table.find("thead tr").prepend(`
+        <th class="wide-column">Booker Email</th>
+        <th class="wide-column">Booker Name</th>
+      `);
+      }
+
+      // Fetch bookings data based on allBookings flag
+      const response = await fetch(`/api/getRoomSeatDateTime?all=${isFaculty}`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -26,10 +47,8 @@ $(document).ready(function () {
       const tableBody = $(".lab_reservations tbody");
       tableBody.empty(); // Clear existing rows
 
-      const currentDate = new Date();
-
       if (bookings.length === 0) {
-        const noReservationsRow = `<tr> <td colspan="5" style="text-align: center;">You don't have any reservations</td></tr>`;
+        const noReservationsRow = `<tr> <td colspan="8" style="text-align: center;">You don't have any reservations</td></tr>`;
         tableBody.append(noReservationsRow);
       } else {
         bookings.forEach((booking) => {
@@ -52,31 +71,33 @@ $(document).ready(function () {
 
           const row = `
           <tr>
+            ${isFaculty ? `<td>${booking.bookerEmail}</td>` : ""}
+            ${isFaculty ? `<td>${booking.bookerName}</td>` : ""}
             <td>${booking.laboratoryNumber}</td>
             <td>${booking.seatNumber}</td>
             <td>${bookingDate.toISOString().split("T")[0]}</td>
             <td>${booking.timeSlot}</td>
             <td>${booking.requestTime}</td>
             <td class="button-cell">
-             ${
-               isPastBooking
-                 ? `<p class="reserveComplete">Reservation Completed!</p>`
-                 : isOngoingBooking
-                 ? `<p class="reserveComplete">In Progress</p>`
-                 : `<button class="edit_button" data-id="${
-                     booking._id
-                   }">Edit</button>
-                  <button class="cancel_button"
-                    data-seat-number="${booking.seatNumber}"
-                    data-lab-number="${booking.laboratoryNumber}"
-                    data-booking-date="${
-                      bookingDate.toISOString().split("T")[0]
-                    }"
-                    data-timeslot="${booking.timeSlot}">Cancel</button>`
-             }
+              ${
+                isPastBooking
+                  ? `<p class="reserveComplete">Reservation Completed!</p>`
+                  : isOngoingBooking
+                  ? `<p class="reserveComplete">In Progress</p>`
+                  : `<button class="edit_button" data-id="${
+                      booking._id
+                    }">Edit</button>
+                    <button class="cancel_button"
+                      data-seat-number="${booking.seatNumber}"
+                      data-lab-number="${booking.laboratoryNumber}"
+                      data-booking-date="${
+                        bookingDate.toISOString().split("T")[0]
+                      }"
+                      data-timeslot="${booking.timeSlot}">Cancel</button>`
+              }
             </td>
           </tr>
-          `;
+        `;
           tableBody.append(row);
         });
       }
@@ -85,8 +106,8 @@ $(document).ready(function () {
       addButtonEventListeners();
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      $(".lab-reservations tbody").html(
-        '<tr><td colspan="5">Error fetching bookings. Please try again later.</td></tr>'
+      $(".lab_reservations tbody").html(
+        '<tr><td colspan="8" style="text-align: center;">Error fetching bookings. Please try again later.</td></tr>'
       );
     }
   }
@@ -115,6 +136,7 @@ $(document).ready(function () {
 
           if (response.ok) {
             // Refresh bookings list
+            fetchUserProfile();
             fetchAndDisplayBookings();
           } else {
             throw new Error("Failed to cancel booking");
@@ -135,6 +157,68 @@ $(document).ready(function () {
     cancelButtons.forEach((button) => {
       button.addEventListener("click", handleCancelClick);
     });
+  }
+
+  async function getUserProfile() {
+    try {
+      const emailResponse = await fetch("/api/currentUserEmail");
+
+      if (!emailResponse.ok) {
+        throw new Error(`HTTP error! Status: ${emailResponse.status}`);
+      }
+
+      const emailData = await emailResponse.json();
+      const email = emailData.email;
+
+      if (!email) {
+        throw new Error("No email found for the current user.");
+      }
+
+      const userProfileResponse = await fetch(
+        `/api/userProfileOther?email=${encodeURIComponent(email)}`
+      );
+
+      if (!userProfileResponse.ok) {
+        throw new Error(`HTTP error! Status: ${userProfileResponse.status}`);
+      }
+
+      const userData = await userProfileResponse.json();
+      return userData;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      alert("Error fetching user profile. Please try again.");
+    }
+  }
+
+  async function getUserProfile() {
+    try {
+      const emailResponse = await fetch("/api/currentUserEmail");
+
+      if (!emailResponse.ok) {
+        throw new Error(`HTTP error! Status: ${emailResponse.status}`);
+      }
+
+      const emailData = await emailResponse.json();
+      const email = emailData.email;
+
+      if (!email) {
+        throw new Error("No email found for the current user.");
+      }
+
+      const userProfileResponse = await fetch(
+        `/api/userProfileOther?email=${encodeURIComponent(email)}`
+      );
+
+      if (!userProfileResponse.ok) {
+        throw new Error(`HTTP error! Status: ${userProfileResponse.status}`);
+      }
+
+      const userData = await userProfileResponse.json();
+      return userData;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      alert("Error fetching user profile. Please try again.");
+    }
   }
 
   // Initial fetch and display of bookings
