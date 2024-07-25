@@ -43,7 +43,6 @@ router.get("/getRoomSeatDateTime", async (req, res) => {
   try {
     let bookingsQuery;
 
-    console.log(all);
     if (all === "true") {
       bookingsQuery = userProfileModel
         .find()
@@ -140,8 +139,13 @@ router.get("/getRoomSeatDateTime", async (req, res) => {
 });
 
 router.post("/cancelbooking", async (req, res) => {
-  const { seatNumber, labNumber, bookingDate, timeslot } = req.query;
-  const bookerEmail = req.session.user.email;
+  const { seatNumber, labNumber, bookingDate, timeslot, bookerEmail } =
+    req.query;
+  const sessionUserEmail = req.session.user.email;
+  const isFaculty = req.session.user.userType === "faculty";
+
+  // Use the passed bookerEmail if user is faculty; otherwise, use session user's email
+  const emailToUse = isFaculty ? bookerEmail : sessionUserEmail;
 
   try {
     const queryDate = new Date(bookingDate + "T00:00:00Z");
@@ -201,7 +205,7 @@ router.post("/cancelbooking", async (req, res) => {
 
     // Remove reference from user's profile
     await userProfileModel.updateOne(
-      { email: bookerEmail },
+      { email: emailToUse },
       { $pull: { bookings: seatStatus._id } }
     );
 

@@ -87,13 +87,16 @@ $(document).ready(function () {
                   : `<button class="edit_button" data-id="${
                       booking._id
                     }">Edit</button>
-                    <button class="cancel_button"
-                      data-seat-number="${booking.seatNumber}"
-                      data-lab-number="${booking.laboratoryNumber}"
-                      data-booking-date="${
-                        bookingDate.toISOString().split("T")[0]
-                      }"
-                      data-timeslot="${booking.timeSlot}">Cancel</button>`
+                  <button class="cancel_button"
+                    data-seat-number="${booking.seatNumber}"
+                    data-lab-number="${booking.laboratoryNumber}"
+                    data-booking-date="${
+                      bookingDate.toISOString().split("T")[0]
+                    }"
+                    data-timeslot="${booking.timeSlot}"
+                    data-booker-email="${
+                      booking.bookerEmail || ""
+                    }">Cancel</button>`
               }
             </td>
           </tr>
@@ -127,9 +130,10 @@ $(document).ready(function () {
         const labNumber = button.getAttribute("data-lab-number");
         const bookingDate = button.getAttribute("data-booking-date");
         const timeslot = button.getAttribute("data-timeslot");
+        const bookerEmail = button.getAttribute("data-booker-email");
 
         try {
-          const queryString = `?seatNumber=${seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&timeslot=${timeslot}`;
+          const queryString = `?seatNumber=${seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&timeslot=${timeslot}&bookerEmail=${bookerEmail}`;
           const response = await fetch("/api/cancelbooking" + queryString, {
             method: "POST",
           });
