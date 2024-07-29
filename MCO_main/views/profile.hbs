@@ -13,9 +13,7 @@
         <br />
         <span class="user-email"></span>
       </div>
-      {{#if isOwnProfile}}
-        <button class="delete-profile-btn">Delete Profile</button>
-      {{/if}}
+      <button class="delete-profile-btn">Delete Profile</button>
     </div>
     <div class="user-description-box">
       <p class="user-description"></p>
@@ -30,16 +28,13 @@
           <th>Seat Number</th>
           <th>Date</th>
           <th>Time</th>
-          <th>Request Date and Time</th>
         </tr>
       </thead>
       <tbody>
         <!-- Reservations will be dynamically inserted here -->
       </tbody>
     </table>
-    {{#if isOwnProfile}}
-      <button class="edit-profile-btn">Edit Profile</button>
-    {{/if}}
+    <button class="edit-profile-btn">Edit Profile</button>
   </div>
 
   <div class="container">

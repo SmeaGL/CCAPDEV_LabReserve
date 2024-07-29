@@ -1,13 +1,12 @@
 const express = require("express");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
 const { engine } = require("express-handlebars");
 const path = require("path");
-const routesRes = require("./routes/reserveSlotServer");
+const routesSlot = require("./routes/reserveSlotServer");
 const routesLog = require("./routes/loginServer");
-const routesEdit = require("./routes/editReservationServer");
+const routesRes = require("./routes/reservationsServer");
 const routesProfile = require("./routes/profileServer");
 
 const app = express();
@@ -22,6 +21,7 @@ app.engine(
     partialsDir: path.join(__dirname, "views/partials"),
   })
 );
+
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -50,9 +50,9 @@ mongoose.connect("mongodb://localhost/CCAPDEV", {
 });
 
 // Routes
-app.use("/api", routesRes);
+app.use("/api", routesSlot);
 app.use("/api", routesLog);
-app.use("/api", routesEdit);
+app.use("/api", routesRes);
 app.use("/api", routesProfile);
 
 function isAuthenticated(req, res, next) {
@@ -62,6 +62,11 @@ function isAuthenticated(req, res, next) {
     res.redirect("/login");
   }
 }
+
+// Default route
+app.get("/", (req, res) => {
+  res.redirect("/login");
+});
 
 // Define routes
 app.get("/contact", (req, res) => {
@@ -112,43 +117,42 @@ app.get("/reserveSlot", isAuthenticated, (req, res) => {
   });
 });
 
-app.get("/profile", isAuthenticated, async (req, res) => {
-  try {
-    const { email } = req.query;
-    let userData;
-    const currentUserEmail = req.session.user.email; // Current logged-in user's email
-
-    if (email) {
-      const response = await fetch(
-        `http://localhost:3000/api/userProfileOther?email=${email}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch profile for email: ${email}`);
-      }
-
-      userData = await response.json();
-    } else {
-      userData = req.session.user;
-    }
-
-    res.render("profile", {
-      title: "Profile",
-      logo: "Profile",
-      isAuthenticated: true,
-      layout: "main",
-      style: "profile.css",
-      javascript: "profile.js",
-      userData,
-      isOwnProfile: currentUserEmail === userData.email,
-    });
-  } catch (error) {
-    console.error("Error fetching user profile:", error);
-    res.status(500).send("Internal Server Error");
-  }
+app.get("/profile", isAuthenticated, (req, res) => {
+  const userData = req.session.user;
+  res.render("profile", {
+    title: "Profile",
+    logo: "Profile",
+    isAuthenticated: true,
+    layout: "main",
+    style: "profile.css",
+    javascript: "profile.js",
+    userData,
+  });
 });
 
+app.get("/reservations", isAuthenticated, (req, res) => {
+  res.render("reservations", {
+    title: "Reservations",
+    logo: "Reservations",
+    isAuthenticated: true,
+    layout: "main",
+    style: "reservations.css",
+    javascript: "reservations.js",
+  });
+});
+
+
 app.get("/editReservation", isAuthenticated, (req, res) => {
+  const seatNumber = req.query.seatNumber;
+  const labNumber = req.query.labNumber;
+  const bookingDate = req.query.bookingDate;
+  const requestTime = req.query.requestTime;
+  const timeslot = req.query.timeslot;
+
+  const userData = req.session.user;
+
+  console.log(seatNumber, labNumber, bookingDate, timeslot);
+
   res.render("editReservation", {
     title: "Edit Reservation",
     logo: "Edit Reservation",
@@ -156,8 +160,19 @@ app.get("/editReservation", isAuthenticated, (req, res) => {
     layout: "main",
     style: "editReservation.css",
     javascript: "editReservation.js",
+    labs: ["G301", "G302", "G303A", "G303B"],
+    daysOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    userData,
+    reservationData: {
+      seatNumber,
+      labNumber,
+      bookingDate,
+      requestTime,
+      timeslot,
+    },
   });
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;

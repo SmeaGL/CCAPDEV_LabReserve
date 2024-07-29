@@ -60,12 +60,14 @@
 }
 
 .calendar {
-  background-color: rgb(50, 50, 50, 0.92);
+  background-color: rgb(50, 50, 50, 0.5);
+  border: 2px solid rgba(179, 179, 179, 0.1);
+  backdrop-filter: blur(30px) brightness(50%) saturate(75%) contrast(75%);
   color: white;
-  border-radius: 5px;
+  border-radius: 10px;
   max-width: 450px;
   width: 100%;
-  box-shadow: 5px 5px 10px black;
+  box-shadow: 0 5px 20px black;
   height: 530px;
 }
 
@@ -108,7 +110,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(0, 0, 0, 0.5);
   padding: 0.6rem;
   margin-bottom: 1rem;
   border-radius: 5px;
@@ -175,9 +177,11 @@
 
 .timeslot_container,
 .seatnumber_container {
-  background-color: rgb(50, 50, 50, 0.92);
-  border-radius: 5px;
-  box-shadow: 5px 5px 10px black;
+  background-color: rgb(50, 50, 50, 0.5);
+  border: 2px solid rgba(179, 179, 179, 0.1);
+  backdrop-filter: blur(30px) brightness(50%) saturate(75%) contrast(75%);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px black;
   height: 525px;
   margin-left: 50px;
 }
@@ -317,30 +321,43 @@
 .wholeOverlay {
   display: none;
   position: fixed;
-  z-index: 1;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0); 
   color: white;
+  z-index: 9999;
+
+  /* transition: cubic-bezier(0.215, 0.610, 0.355, 1) 0.5s; */
+
 }
-.overlay {
-  background-color: rgb(50, 50, 50);
+.overlay { 
+  background-color: rgb(50, 50, 50, 0.95);
+  border: 2px solid rgba(179, 179, 179, 0.1);
+  /* backdrop-filter: blur(30px); */
+  /* -webkit-backdrop-filter: blur(30px); */
+  box-shadow: 0 7.5px 40px rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid #000000;
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
   min-height: 525px;
   min-width: 350px;
   width: auto;
   height: auto;
   border-radius: 10px;
-  padding-right: 20px;
-  padding-left: 15px;
+  padding: 20px;
+  z-index: 9999;
+  
+  /* transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1); */
 }
+
+
+
 
 .close {
   color: #aaa;
@@ -413,19 +430,4 @@
 #confirmButton:hover,
 #cancelButton:hover {
   opacity: 0.8;
-}
-
-#userDropdown {
-  width: auto;
-  padding: 2px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 15px;
-  color: black;
-}
-
-#userDropdown:focus {
-  border-color: #007bff;
-  outline: none;
 }

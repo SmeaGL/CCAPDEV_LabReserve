@@ -143,17 +143,12 @@ router.get("/seat-statuses", async (req, res) => {
 });
 
 router.post("/confirm-booking", async (req, res) => {
-  const {
-    seatNumber,
-    labNumber,
-    bookingDate,
-    requestTime,
-    bookerName,
-    bookerEmail,
-    timeslot,
-  } = req.query;
+  const { seatNumber, labNumber, bookingDate, requestTime } = req.query;
 
-  // session values if query values are not provided
+  // Accessing user information from session
+  const bookerName = req.session.user.username;
+  const bookerEmail = req.session.user.email;
+  const timeslot = req.query.timeslot;
 
   try {
     const queryDate = new Date(bookingDate);
@@ -206,32 +201,137 @@ router.post("/confirm-booking", async (req, res) => {
   }
 });
 
-router.get("/getUserEmails", async (req, res) => {
-  try {
-    const users = await userProfileModel
-      .find({}, "email username description userType")
-      .sort({ email: 1 });
 
-    const userData = users.map((userProfile) => ({
-      email: userProfile.email,
-      name: userProfile.username,
-      description: userProfile.description,
-      userType: userProfile.userType,
-    }));
+// router.post("/replace-booking", async (req, res) => {
+//   const { 
+//     seatNumber, labNumber, bookingDate, requestTime,
+//     oldSeatNumber, oldLabNumber, oldBookingDate} = req.query;
 
-    res.json(userData);
-  } catch (error) {
-    console.error("Error fetching user emails:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+//   // Accessing user information from session
+//   const bookerName = req.session.user.username;
+//   const bookerEmail = req.session.user.email;
+//   const timeslot = req.query.timeslot;
+  
 
-router.get("/currentUserEmail", (req, res) => {
-  if (req.session && req.session.user && req.session.user.email) {
-    res.json({ email: req.session.user.email });
-  } else {
-    res.status(401).json({ error: "Not authenticated" });
-  }
-});
+//   try {
+
+//     // Delete first
+//     const queryDate = new Date(oldBookingDate + "T00:00:00Z");
+//     const nextDay = new Date(queryDate);
+//     console.log("Next day:", nextDay);
+//     nextDay.setUTCDate(queryDate.getUTCDate() + 1);
+
+//     const dateDoc = await DateModel.findOne({
+//       date: {
+//         $gte: queryDate,
+//         $lt: nextDay,
+//       },
+//     });
+
+//     if (!dateDoc) {
+//       return res.status(404).json({ message: "Date not found" });
+//     }
+
+//     const laboratory = await LaboratoryNumber.findOne({
+//       laboratoryNumber: oldLabNumber,
+//       date: dateDoc._id,
+//     }).populate({
+//       path: "timeSlots",
+//       match: { timeSlot: oldTimeslot },
+//       populate: {
+//         path: "seatStatuses",
+//         match: { seatNumber: oldSeatNumber },
+//       },
+//     });
+
+//     if (!laboratory) {
+//       return res.status(404).json({ message: "Laboratory not found" });
+//     }
+
+//     // Find the specific time slot and seat status
+//     const timeSlot = laboratory.timeSlots.find(
+//       (slot) => slot.timeSlot === oldTimeslot
+//     );
+
+//     if (!timeSlot) {
+//       return res.status(404).json({ message: "Time slot not found" });
+//     }
+
+//     const seatStatus = timeSlot.seatStatuses.find(
+//       (status) => status.seatNumber === oldSeatNumber && status.status === "Booked"
+//     );
+
+//     if (!seatStatus) {
+//       return res
+//         .status(404)
+//         .json({ message: "Booking not found or already cancelled" });
+//     }
+
+//     // Update seat status to available and clear booking info
+//     seatStatus.status = "Available";
+//     seatStatus.info = {};
+//     const cancelledSeatStatus = await seatStatus.save();
+
+//     console.log("Cancelled booking:", seatStatus);
+
+//     // Remove reference from user's profile
+//     await userProfileModel.updateOne(
+//       { email: bookerEmail },
+//       { $pull: { bookings: seatStatus._id } }
+//     );
+
+    
+
+//     // Add again
+//     queryDate = new Date(bookingDate);
+//     queryDate.setUTCHours(12, 0, 0, 0);
+
+//     dateDoc = await DateModel.findOne({
+//       date: {
+//         $gte: new Date(queryDate.getTime()),
+//         $lt: new Date(queryDate.getTime() + 24 * 60 * 60 * 1000),
+//       },
+//     });
+
+//     laboratory = await LaboratoryNumber.findOne({
+//       laboratoryNumber: labNumber,
+//       date: dateDoc._id,
+//     }).populate({
+//       path: "timeSlots",
+//       match: { timeSlot: timeslot },
+//       populate: {
+//         path: "seatStatuses",
+//         match: { seatNumber: seatNumber, status: "Available" },
+//       },
+//     });
+
+//     timeSlot = laboratory.timeSlots.find(
+//       (slot) => slot.seatStatuses.length > 0
+//     );
+
+//     seatStatus = timeSlot.seatStatuses.find(
+//       (status) => status.seatNumber === seatNumber
+//     );
+
+//     seatStatus.status = "Booked";
+//     seatStatus.info = { bookerName, bookerEmail, bookingDate, requestTime };
+//     const updatedSeatStatus = await seatStatus.save();
+
+//     await userProfileModel.updateOne(
+//       { email: bookerEmail },
+//       { $push: { bookings: seatStatus._id } }
+//     );
+
+//     res
+//       .status(200)
+//       .json({ message: "Booking changed", seatStatus: updatedSeatStatus });
+//   } catch (error) {
+//     console.error("Error changing the booking:", error);
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error", details: error.message });
+//   }
+
+// });
 
 module.exports = router;

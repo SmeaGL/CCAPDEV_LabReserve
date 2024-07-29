@@ -27,16 +27,6 @@ router.get("/publicProfile", async (req, res) => {
   }
 });
 
-router.get("/getUserEmails", async (req, res) => {
-  try {
-    const users = await userProfileModel.find({}, "email").sort({ email: 1 });
-    res.json(users);
-  } catch (error) {
-    console.error("Error fetching user emails:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 // New route to fetch user profile by email
 router.get("/userProfileOther", async (req, res) => {
   try {
@@ -51,7 +41,6 @@ router.get("/userProfileOther", async (req, res) => {
       email: userProfile.email,
       name: userProfile.username,
       description: userProfile.description,
-      userType: userProfile.userType,
     };
 
     res.json(userData);
