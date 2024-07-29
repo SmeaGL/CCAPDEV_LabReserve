@@ -40,7 +40,10 @@ function initializeCalendarAndReservations() {
     },
   ];
 
+  
+
   let dateObject = new Date();
+  
   let dayName = dateMonthObject[0].days[dateObject.getDay()];
   let month = dateObject.getMonth();
   let year = dateObject.getFullYear();
@@ -106,6 +109,8 @@ function initializeCalendarAndReservations() {
       .on("click", function () {
         dateElements.find("li").removeClass("active");
         $(this).addClass("active");
+        lastClickedTimeslot = null;
+
 
         date = parseInt($(this).text());
         dayName = dateMonthObject[0].days[new Date(year, month, date).getDay()];
@@ -159,6 +164,7 @@ function initializeCalendarAndReservations() {
       const response = await fetch(
         `/api/available-dates?year=${year}&month=${month + 1}`
       );
+      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -367,117 +373,70 @@ function initializeCalendarAndReservations() {
     });
   };
 
-  // Function to know if facult or not
-  async function getUserProfile() {
-    try {
-      const emailResponse = await fetch("/api/currentUserEmail");
+  function overlayVisibile(isVisible){
+    const overlay = $("#myOverlay");
+    const overlayContent = $("#myOverlay > .overlay");
+    
 
-      if (!emailResponse.ok) {
-        throw new Error(`HTTP error! Status: ${emailResponse.status}`);
-      }
+    if(isVisible){  
+    
+      overlay.css({
+        "backdrop-filter": "blur(5px) saturate(50%) brightness(75%)",
+        "background-color": "rgba(0, 0, 0, 0.2)",
+        "visibility": "visible",
+        "transition": "cubic-bezier(.21, .61, .35, 1) 0.4s"
+      });
 
-      const emailData = await emailResponse.json();
-      const email = emailData.email;
+      overlayContent.css({
+        "transform": "translate(-50%, -50%) scale(1)",
+        "opacity": "1",
+        "visibility": "visible",
+        "filter": "blur(0px)",
+        "transition": "cubic-bezier(.32,1.49,.36,1) 0.4s"
+      });
+      
 
-      if (!email) {
-        throw new Error("No email found for the current user.");
-      }
 
-      const userProfileResponse = await fetch(
-        `/api/userProfileOther?email=${encodeURIComponent(email)}`
-      );
+    } else {
 
-      if (!userProfileResponse.ok) {
-        throw new Error(`HTTP error! Status: ${userProfileResponse.status}`);
-      }
+      overlay.css({
+        "backdrop-filter": "blur(0px)",
+        "background-color": "rgba(0, 0, 0, 0)",
+        "visibility": "collapse",
+        "transition": "cubic-bezier(.69,0,1,1.04) 0.15 0.15s"
+      });
 
-      const userData = await userProfileResponse.json();
-      return userData;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      alert("Error fetching user profile. Please try again.");
+      overlayContent.css({
+        "transform": "translate(-50%, -50%) scale(0.5)",
+        "opacity": "0",
+        "visibility": "collapse",
+        "filter": "blur(10px)",
+        "transition": "cubic-bezier(.69,0,1,1.04) 0.15s"
+      });
+
+
     }
   }
-  async function confirmBooking(timeslot, seat, labNumber, date) {
-    const now = new Date();
-    const requestTime = now.toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false, // Use 24-hour time format
-    });
+
+  function confirmBooking(timeslot, seat, labNumber, date) {
+    const requestTime = new Date().toLocaleTimeString();
     const bookingDate = date;
-    const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
-
-    try {
-      const currentUserProfile = await getUserProfile();
-      var name = currentUserProfile.name;
-      var email = currentUserProfile.email;
-      var userType = currentUserProfile.userType;
-      bookingInfo.empty();
-
-      // If the user is an admin, fetch user emails
-      if (userType === "faculty") {
-        const userResponse = await fetch("/api/getUserEmails");
-        const users = await userResponse.json();
-
-        const dropdownHtml = `
-        <span class="bookingLine">Select Email: 
-          <select id="userDropdown">
-            <option value="${currentUserProfile.email}">${
-          currentUserProfile.email
-        }</option>
-            ${users
-              .filter((user) => user.email !== currentUserProfile.email)
-              .map(
-                (user) => `
-                <option value="${user.email}" data-name="${user.name}">
-                  ${user.email}
-                </option>
-              `
-              )
-              .join("")}
-          </select>
-        </span><br>
-      `;
-
-        bookingInfo.append(dropdownHtml);
-        $("#userDropdown").on("change", function () {
-          const selectedOption = $(this).find("option:selected");
-          email = selectedOption.val();
-          name = selectedOption.data("name");
-        });
-      }
-
-      bookingInfo.append(`
-      <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
-      <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
-      <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
-      <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
-      <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
-      <button id="cancelButton">Cancel</button>
-      <button id="confirmButton">Confirm Booking</button>
+    bookingInfo.html(`
+        <span class="bookingLine">Laboratory: <span class="bookingInfoValue">${labNumber}</span></span><br>
+        <span class="bookingLine">Seat Number: <span class="bookingInfoValue">${seat.seatNumber}</span></span><br>
+        <span class="bookingLine">Time Slot: <span class="bookingInfoValue">${timeslot}</span></span><br>
+        <span class="bookingLine">Request Time: <span class="bookingInfoValue">${requestTime}</span></span><br>
+        <span class="bookingLine">Booking Date: <span class="bookingInfoValue">${bookingDate}</span></span><br>
+        <button id="cancelButton">Cancel</button>
+        <button id="confirmButton">Confirm Booking</button>
     `);
-    } catch (error) {
-      console.error("Error fetching user profiles:", error);
-      bookingInfo.append(
-        "<p>Error loading user information. Please try again later.</p>"
-      );
-    }
 
-    overlay.show();
+    overlayVisibile(true);
 
     $("#confirmButton").on("click", async function () {
       try {
-        const queryString = `?timeslot=${timeslot}&seatNumber=${
-          seat.seatNumber
-        }&labNumber=${labNumber}&bookingDate=${bookingDate}&requestTime=${requestTime}&bookerEmail=${encodeURIComponent(
-          email
-        )}&bookerName=${encodeURIComponent(name)}`;
+        const queryString = `?timeslot=${timeslot}&seatNumber=${seat.seatNumber}&labNumber=${labNumber}&bookingDate=${bookingDate}&requestTime=${requestTime}`;
         const response = await fetch("/api/confirm-booking" + queryString, {
           method: "POST",
           headers: {
@@ -491,7 +450,11 @@ function initializeCalendarAndReservations() {
 
         const result = await response.json();
 
-        overlay.hide();
+        overlayVisibile(true);
+
+        
+
+
         const isConfirmed = true;
 
         // Use the bookerName from the server response
@@ -508,9 +471,10 @@ function initializeCalendarAndReservations() {
           labNumber,
           isConfirmed
         );
-
+        
         await displaySeatNumberReservationFromAPI(labNumber, timeslot, date);
         await displayTimeslotReservation(labNumber, date);
+
       } catch (error) {
         console.error("Error confirming booking:", error);
         alert("Error confirming booking. Please try again.");
@@ -518,7 +482,7 @@ function initializeCalendarAndReservations() {
     });
 
     $("#cancelButton").on("click", function () {
-      overlay.hide();
+      overlayVisibile(false);
     });
   }
 
@@ -532,7 +496,6 @@ function initializeCalendarAndReservations() {
     labNumber,
     isConfirmed = false
   ) {
-    const overlay = $("#myOverlay");
     const bookingInfo = $("#bookingInfo");
 
     // Construct the HTML for booking information
@@ -555,7 +518,7 @@ function initializeCalendarAndReservations() {
   `);
 
     // Show the overlay
-    overlay.show();
+    overlayVisibile(true);
 
     // Click event handler for bookerProfileLink class
     $(".bookerProfileLink").on("click", function (event) {
@@ -566,20 +529,7 @@ function initializeCalendarAndReservations() {
   }
 
   async function redirectToProfile(email) {
-    try {
-      const response = await fetch(`/api/userProfileOther?email=${email}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const userData = await response.json();
-      window.location.href = `/profile?email=${encodeURIComponent(
-        userData.email
-      )}`;
-    } catch (error) {
-      console.error("Error in fetching other profile:", error);
-    }
+    window.location.href = "/profile";
   }
 
   // Event listener for changes in the selected lab
@@ -591,14 +541,16 @@ function initializeCalendarAndReservations() {
   });
 
   const overlay = $("#myOverlay");
+  overlay.show();
+
   const span = $(".close");
   span.on("click", function () {
-    overlay.hide();
+    overlayVisibile(false);
   });
 
   $(window).on("click", function (event) {
     if (event.target === overlay[0]) {
-      overlay.hide();
+      overlayVisibile(false);
     }
   });
 }
