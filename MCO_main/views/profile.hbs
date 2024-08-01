@@ -2,25 +2,60 @@
   <nav class="navigation"></nav>
   <div id="top" class="container">
     <div class="user-profile">
-      <img
-        src="images/avatar.png"
-        alt="User Profile Picture"
-        width="80"
-        height="80"
-      />
+      <img src="{{#if userData.profilePicture}}{{userData.profilePicture}}{{else}}images/avatar.png{{/if}}" alt="User Profile Picture" width="80" height="80">
+
       <div class="user-info">
-        <strong class="user-name"></strong>
+        <strong class="user-name">{{userData.username}}</strong>
         <br />
-        <span class="user-email"></span>
+        <span class="user-email">{{userData.email}}</span>
       </div>
-      <button class="delete-profile-btn">Delete Profile</button>
+      {{#if isOwnProfile}}
+        <button class="delete-profile-btn" onclick="deleteProfile()">Delete Profile</button>
+      {{/if}}
     </div>
     <div class="user-description-box">
-      <p class="user-description"></p>
+      <p class="user-description">{{userData.description}}</p>
     </div>
 
-    <h2>Reservations</h2>
+    <!-- Edit Profile Form -->
+    {{#if isOwnProfile}}
+      <div id="edit-profile-form" class="edit-profile-form" style="display: none;">
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="username">Name:</label>
+            <input type="text" id="username" name="username" value="{{userData.username}}" required />
+          </div>
 
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{userData.email}}" required disabled />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required>{{userData.description}}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="userType">User Type:</label>
+            <select id="userType" name="userType" required>
+              <option value="student" {{#ifCond userData.userType "student"}}selected{{/ifCond}}>Student</option>
+              <option value="faculty" {{#ifCond userData.userType "faculty"}}selected{{/ifCond}}>Faculty</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="profilePicture">Profile Picture:</label>
+            <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" />
+          </div>
+
+          <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+      </div>
+    {{/if}}
+
+    <h2>Reservations</h2>
     <table class="lab-reservations">
       <thead>
         <tr>
@@ -28,18 +63,20 @@
           <th>Seat Number</th>
           <th>Date</th>
           <th>Time</th>
+          <th>Request Date and Time</th>
         </tr>
       </thead>
       <tbody>
         <!-- Reservations will be dynamically inserted here -->
       </tbody>
     </table>
-    <button class="edit-profile-btn">Edit Profile</button>
+    {{#if isOwnProfile}}
+      <button class="edit-profile-btn" onclick="toggleEditForm()">Edit Profile</button>
+    {{/if}}
   </div>
 
   <div class="container">
     <h2>Public Profile</h2>
-
     <table class="public-profile">
       <thead>
         <tr>
@@ -49,9 +86,62 @@
       </thead>
       <tbody>
         <tr>
-
+          <!-- Public profiles will be dynamically inserted here -->
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<script>
+  function toggleEditForm() {
+    const form = document.getElementById("edit-profile-form");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
+
+  async function deleteProfile() {
+    if (confirm("Are you sure you want to delete your profile?")) {
+      try {
+        const response = await fetch("/api/profile/", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          alert("Profile deleted successfully.");
+          window.location.href = "/logout"; 
+        } else {
+          throw new Error("Failed to delete profile.");
+        }
+      } catch (error) {
+        console.error("Error deleting profile:", error);
+        alert("An error occurred while deleting the profile.");
+      }
+    }
+  }
+
+  document.getElementById("editProfileForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    try {
+      const response = await fetch("/api/profile/", {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert("Profile updated successfully.");
+        window.location.reload(); 
+      } else {
+        throw new Error("Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("An error occurred while updating the profile.");
+    }
+  });
+</script>

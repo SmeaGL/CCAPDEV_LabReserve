@@ -7,6 +7,7 @@ const userProfile = new Schema({
   email: { type: String, required: true, unique: true },
   description: { type: String, required: true },
   userType: { type: String, required: true },
+  profilePicture: { type: String, default: "images/default-avatar.png" }, // New field
   bookings: [
     {
       type: Schema.Types.ObjectId,

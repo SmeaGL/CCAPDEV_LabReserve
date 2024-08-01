@@ -29,6 +29,7 @@ db.once("open", async () => {
       password: await bcrypt.hash("admin", 10),
       userType: "faculty",
       description: "No Description.",
+      profilePicture: null,
     });
 
     const labNumbers = ["G301", "G302", "G303A", "G303B"];

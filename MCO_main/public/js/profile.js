@@ -7,7 +7,11 @@ $(document).ready(function () {
       }
       const userData = await response.json();
 
-      // Update user information in the HTML
+      if (userData.profilePicture) {
+        $(".user-profile img").attr("src", userData.profilePicture);
+      } else {
+        $(".user-profile img").attr("src", "images/avatar.png");
+      }
       $(".user-name").text(userData.name);
       $(".user-email").text(userData.email);
       $(".user-description").text(userData.description);
@@ -40,6 +44,7 @@ $(document).ready(function () {
                   <td>${booking.seatNumber}</td>
                   <td>${new Date(booking.date).toISOString().split("T")[0]}</td>
                   <td>${booking.timeSlot}</td>
+                  <td>${booking.requestTime}</td>
                 </tr>`;
           tableBody.append(row);
         });
@@ -82,16 +87,16 @@ $(document).ready(function () {
     }
   }
 
-  // Add this outside of fetchAndDisplayPublicProfile, but inside the $(document).ready function
+  // Get pother pfoile.
   $(".public-profile tbody").on(
     "click",
     ".profile-link",
     async function (event) {
       event.preventDefault();
       const email = $(this).data("email");
+
       try {
-        await fetchUserProfile(email);
-        await fetchAndDisplayBookings(email);
+        window.location.href = `/profile?email=${encodeURIComponent(email)}`;
       } catch (error) {
         console.error("Error fetching profile and bookings:", error);
       }
@@ -116,8 +121,6 @@ $(document).ready(function () {
         const userData = await response.json();
         email = userData.email; // Assign fetched email to variable
       }
-
-      // Now email is guaranteed to be valid
       await fetchUserProfile(email);
       await fetchAndDisplayBookings(email);
     } catch (error) {
@@ -125,6 +128,15 @@ $(document).ready(function () {
     }
   }
 
-  fetchUserProfileAndBookings();
+  // Check if there's an email query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailParam = urlParams.get("email");
+
+  if (emailParam) {
+    fetchUserProfileAndBookings(emailParam);
+  } else {
+    fetchUserProfileAndBookings();
+  }
+
   fetchAndDisplayPublicProfile();
 });

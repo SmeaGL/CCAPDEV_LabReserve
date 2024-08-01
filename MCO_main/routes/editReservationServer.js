@@ -27,6 +27,7 @@ router.get("/userProfile", async (req, res) => {
       email: userProfile.email,
       name: userProfile.username,
       description: userProfile.description,
+      profilePicture: userProfile.profilePicture,
     };
 
     res.json(userData);

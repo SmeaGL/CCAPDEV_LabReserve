@@ -1,56 +1,67 @@
-<div class="calendar">
-  <div class="calendar_inner">
-    <div class="calendar_arrows">
-      <div class="calendar_heading">
-        <i class="fas fa-arrow-left" id="previous"></i>
-        <h2 class="month_year">{{monthYear}}</h2>
-        <i class="fas fa-arrow-right" id="next"></i>
+<div class="page">
+  <div class="timeslot_container">
+    <div class="user-profile">
+      <img
+        src="../images/avatar.png"
+        alt="User Profile Picture"
+        width="80"
+        height="80"
+      />
+      <div class="user-info">
+        <!-- Display user's name and email dynamically -->
+        <strong class="user-name"></strong>
+        <br />
+        <span class="user-email"></span>
       </div>
-      <div id="selectLabContainer">
-        <p class="selectLab_text">Select Laboratory:</p>
-        <select id="selectedLab">
-          {{#each labs}}
-            <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-      </div>
-      <div class="current_datetime">
-        <p class="day_text">Today</p>
-        <p class="date_text"></p>
-      </div>
-      <div class="day_date">
-        <ul class="day">
-          {{#each daysOfWeek}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-        <ul class="date">
-          {{#each dates}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-      </div>
+
+      <p class="my_reservation">Reservation</p>
     </div>
-  </div>
-</div>
 
-<!-- Reservation Code -->
-<div class="timeslot_container">
-  <div class="timeslot_reservation">
-    <div class="time_slot"></div>
-  </div>
-</div>
+    <!-- Display user's description dynamically -->
+    <div class="user-description-box">
+      <p class="user-description">{{userProfile.description}}</p>
+    </div>
 
-<div class="seatnumber_container">
-  <div class="seatnumber_reservation">
-    <div class="seat_number"></div>
-  </div>
-</div>
-
-<div id="myOverlay" class="wholeOverlay">
-  <div class="overlay">
-    <span class="close">&times;</span>
-    <h3 id="bookingDetailsTag">Booking Details</h3>
-    <p id="bookingInfo"></p>
+    <table class="lab_reservations" data-all="{{all}}">
+    <thead>
+      <tr>
+        <th class="narrow-column">Room</th>
+        <th class="narrow-column">Seat Number</th>
+        <th class="middle-column">Date</th>
+        <th class="middle-column">Time</th>
+        <th class="middle-column">Request Date and Time</th>
+        <th class="wide-column">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{#each bookings}}
+        <tr>
+          {{#if ../allBookings}}
+            <td class="center-text">{{bookerEmail}}</td>
+            <td class="center-text">{{bookerName}}</td>
+          {{/if}}
+          <td>{{laboratoryNumber}}</td>
+          <td>{{seatNumber}}</td>
+          <td>{{date}}</td>
+          <td>{{timeSlot}}</td>
+          <td>{{requestTime}}</td>
+          <td class="button-cell">
+            {{#if isPastBooking}}
+              <p class="reserveComplete">Reservation Completed!</p>
+            {{else if isOngoingBooking}}
+              <p class="reserveComplete">In Progress</p>
+            {{else}}
+              <button class="edit_button" data-id="{{_id}}">Edit</button>
+              <button class="cancel_button"
+                data-seat-number="{{seatNumber}}"
+                data-lab-number="{{laboratoryNumber}}"
+                data-booking-date="{{date}}"
+                data-timeslot="{{timeSlot}}">Cancel</button>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
   </div>
 </div>

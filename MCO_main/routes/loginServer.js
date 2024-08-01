@@ -36,6 +36,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       userType,
       description: "No Description.",
+      profilePicture: null,
     });
 
     await newUser.save();
