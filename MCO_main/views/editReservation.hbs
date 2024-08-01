@@ -51,12 +51,18 @@
             {{else if isOngoingBooking}}
               <p class="reserveComplete">In Progress</p>
             {{else}}
-              <button class="edit_button" data-id="{{_id}}">Edit</button>
-              <button class="cancel_button"
-                data-seat-number="{{seatNumber}}"
-                data-lab-number="{{laboratoryNumber}}"
-                data-booking-date="{{date}}"
-                data-timeslot="{{timeSlot}}">Cancel</button>
+                <button class="edit_button"
+                        data-seat-number="{{seatNumber}}"
+                        data-lab-number="{{laboratoryNumber}}"
+                        data-booking-date="{{date}}"
+                        data-timeslot="{{timeSlot}}"
+                        data-booker-email="{{bookerEmail}}">Edit</button>
+                <button class="cancel_button"
+                        data-seat-number="{{seatNumber}}"
+                        data-lab-number="{{laboratoryNumber}}"
+                        data-booking-date="{{date}}"
+                        data-timeslot="{{timeSlot}}"
+                        data-booker-email="{{bookerEmail}}">Cancel</button>
             {{/if}}
           </td>
         </tr>
@@ -65,3 +71,6 @@
     </table>
   </div>
 </div>
+
+
+

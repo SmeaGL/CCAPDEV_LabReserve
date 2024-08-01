@@ -51,6 +51,12 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.table-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .lab_reservations {
   width: 100%;
   margin-top: 20px;
@@ -59,14 +65,7 @@
 
 table.lab_reservations {
   border-collapse: collapse;
-  margin-bottom: 20px;
   width: 100%;
-}
-
-table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
 }
 
 th,
@@ -81,23 +80,28 @@ th {
   color: white;
 }
 
-.wide-column {
-  width: 22%;
-}
-
-.middle-column {
-  width: 13%;
-}
-
-.narrow-column {
-  width: 9%;
-}
-
-.lab_reservations th {
-  background-color: #4caf50;
-}
-.lab_reservations td {
+td {
   background-color: white;
+}
+
+table th,
+table td {
+  width: auto;
+}
+
+th.narrow-column,
+td.narrow-column {
+  min-width: 80px;
+}
+
+th.middle-column,
+td.middle-column {
+  min-width: 120px;
+}
+
+th.wide-column,
+td.wide-column {
+  min-width: 150px;
 }
 
 .my_reservation {
@@ -125,12 +129,12 @@ th {
   display: inline-block;
   max-width: 100px;
   white-space: nowrap;
-  text-align: right;
+  text-align: center;
+  margin: 0;
 }
 
 .edit_button {
   background-color: #45a049;
-  margin-right: 10px;
 }
 
 .cancel_button {

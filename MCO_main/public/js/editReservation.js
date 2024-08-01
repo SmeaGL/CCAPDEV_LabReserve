@@ -89,19 +89,31 @@ $(document).ready(function () {
                   ? `<p class="reserveComplete">Reservation Completed!</p>`
                   : isOngoingBooking
                   ? `<p class="reserveComplete">In Progress</p>`
-                  : `<button class="edit_button" data-id="${
-                      booking._id
-                    }">Edit</button>
-                  <button class="cancel_button"
-                    data-seat-number="${booking.seatNumber}"
-                    data-lab-number="${booking.laboratoryNumber}"
-                    data-booking-date="${
-                      bookingDate.toISOString().split("T")[0]
-                    }"
-                    data-timeslot="${booking.timeSlot}"
-                    data-booker-email="${
-                      booking.bookerEmail || ""
-                    }">Cancel</button>`
+                  : `<button class="edit_button" 
+                        data-id="${booking._id}"
+                        data-seat-number="${booking.seatNumber}"
+                        data-lab-number="${booking.laboratoryNumber}"
+                        data-booking-date="${
+                          bookingDate.toISOString().split("T")[0]
+                        }"
+                        data-timeslot="${booking.timeSlot}"
+                        data-booker-email="${booking.bookerEmail || ""}"
+                        data-booker-name="${
+                          booking.bookerName || ""
+                        }">Edit</button>
+
+                <button class="cancel_button"
+                        data-seat-number="${booking.seatNumber}"
+                        data-lab-number="${booking.laboratoryNumber}"
+                        data-booking-date="${
+                          bookingDate.toISOString().split("T")[0]
+                        }"
+                        data-timeslot="${booking.timeSlot}"
+                        data-booker-email="${booking.bookerEmail || ""}"
+                        data-booker-name="${
+                          booking.bookerName || ""
+                        }">Cancel</button>
+                `
               }
             </td>
           </tr>
@@ -121,10 +133,30 @@ $(document).ready(function () {
   }
 
   function addButtonEventListeners() {
-    function handleEditClick(event) {
-      window.location.href = "/reserveSlot";
-    }
+    async function handleEditClick(event) {
+      const button = event.currentTarget;
 
+      // Retrieve data attributes from the button
+      const seatNumber = button.getAttribute("data-seat-number");
+      const labNumber = button.getAttribute("data-lab-number");
+      const bookingDate = button.getAttribute("data-booking-date");
+      const timeslot = button.getAttribute("data-timeslot");
+      const bookerEmail = button.getAttribute("data-booker-email");
+      const bookerName = button.getAttribute("data-booker-name");
+
+      const reservationData = {
+        seatNumber,
+        labNumber,
+        bookingDate,
+        timeslot,
+        bookerEmail, // Include bookerEmail if needed
+        bookerName,
+      };
+
+      const queryString = new URLSearchParams(reservationData).toString();
+
+      window.location.href = `/replaceBooking?${queryString}`;
+    }
     async function handleCancelClick(event) {
       const userConfirmed = confirm("Are you sure you want to cancel?");
       if (userConfirmed) {
@@ -158,45 +190,15 @@ $(document).ready(function () {
     }
 
     const editButtons = document.querySelectorAll(".edit_button");
+    const cancelButtons = document.querySelectorAll(".cancel_button");
+
     editButtons.forEach((button) => {
       button.addEventListener("click", handleEditClick);
     });
 
-    const cancelButtons = document.querySelectorAll(".cancel_button");
     cancelButtons.forEach((button) => {
       button.addEventListener("click", handleCancelClick);
     });
-  }
-
-  async function getUserProfile() {
-    try {
-      const emailResponse = await fetch("/api/currentUserEmail");
-
-      if (!emailResponse.ok) {
-        throw new Error(`HTTP error! Status: ${emailResponse.status}`);
-      }
-
-      const emailData = await emailResponse.json();
-      const email = emailData.email;
-
-      if (!email) {
-        throw new Error("No email found for the current user.");
-      }
-
-      const userProfileResponse = await fetch(
-        `/api/userProfileOther?email=${encodeURIComponent(email)}`
-      );
-
-      if (!userProfileResponse.ok) {
-        throw new Error(`HTTP error! Status: ${userProfileResponse.status}`);
-      }
-
-      const userData = await userProfileResponse.json();
-      return userData;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      alert("Error fetching user profile. Please try again.");
-    }
   }
 
   async function getUserProfile() {

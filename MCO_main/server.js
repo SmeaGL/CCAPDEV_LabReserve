@@ -10,6 +10,7 @@ const routesLog = require("./routes/loginServer");
 const routesEdit = require("./routes/editReservationServer");
 const routesProfile = require("./routes/profileServer");
 const editProfileRoutes = require("./routes/editProfileServer");
+const replaceBookingRoutes = require("./routes/replaceBookingServer");
 
 const app = express();
 
@@ -33,6 +34,10 @@ app.engine(
 );
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
+
+Handlebars.registerHelper("json", function (context) {
+  return JSON.stringify(context);
+});
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -64,6 +69,7 @@ app.use("/api", routesLog);
 app.use("/api", routesEdit);
 app.use("/api", routesProfile);
 app.use("/api", editProfileRoutes);
+app.use("/api", replaceBookingRoutes);
 
 function isAuthenticated(req, res, next) {
   if (req.session.user) {
@@ -166,6 +172,39 @@ app.get("/editReservation", isAuthenticated, (req, res) => {
     layout: "main",
     style: "editReservation.css",
     javascript: "editReservation.js",
+  });
+});
+
+app.get("/replaceBooking", isAuthenticated, (req, res) => {
+  const {
+    seatNumber,
+    labNumber,
+    bookingDate,
+    timeslot,
+    bookerEmail,
+    bookerName,
+  } = req.query;
+
+  const userData = req.session.user;
+
+  res.render("replaceBooking", {
+    title: "t Reservation",
+    logo: "Edit Reservation",
+    isAuthenticated: true,
+    layout: "main",
+    style: "replaceBooking.css",
+    javascript: "replaceBooking.js",
+    labs: ["G301", "G302", "G303A", "G303B"],
+    daysOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    userData,
+    reservationData: {
+      seatNumber,
+      labNumber,
+      bookingDate,
+      timeslot,
+      bookerEmail,
+      bookerName,
+    },
   });
 });
 
