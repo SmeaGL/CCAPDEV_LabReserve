@@ -48,7 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "your-secret-key",
+    secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
   })
@@ -58,7 +58,7 @@ app.use(
 app.use(cookieParser());
 
 // MongoDB Connection
-mongoose.connect("mongodb://localhost/CCAPDEV", {
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
