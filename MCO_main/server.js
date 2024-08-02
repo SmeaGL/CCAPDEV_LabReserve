@@ -143,10 +143,10 @@ app.get("/profile", isAuthenticated, async (req, res) => {
     const currentUserEmail = req.session.user.email; // Current logged-in user's email
 
     if (email) {
-      userData = await userProfileModel.findOne({ email }).lean();
-      if (!userData) {
-        throw new Error(`Profile not found for email: ${email}`);
-      }
+      const response = await axios.get(
+        `http://localhost:3000/api/userProfileOther?email=${email}`
+      );
+      userData = response.data;
     } else {
       userData = req.session.user;
     }
