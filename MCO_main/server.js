@@ -3,6 +3,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
+const mongoStore = require("connect-mongo");
 const { engine } = require("express-handlebars");
 const path = require("path");
 
@@ -12,6 +13,14 @@ const routesEdit = require("./routes/editReservationServer");
 const routesProfile = require("./routes/profileServer");
 const editProfileRoutes = require("./routes/editProfileServer");
 const replaceBookingRoutes = require("./routes/replaceBookingServer");
+
+const {
+  DateModel,
+  LaboratoryNumber,
+  TimeSlot,
+  SeatStatus,
+  userProfileModel,
+} = require("./models/laboratorySchema");
 
 const app = express();
 
@@ -52,6 +61,10 @@ app.use(
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
+    store: mongoStore.create({
+      mongoUrl: process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV",
+      collectionName: "sessions",
+    }),
   })
 );
 

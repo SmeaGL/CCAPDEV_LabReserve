@@ -6,10 +6,9 @@ const {
   TimeSlot,
   SeatStatus,
   userProfileModel,
-} = require("./models/laboratorySchema"); // Adjust the path as needed
+} = require("./models/laboratorySchema");
 
-async function populateLaboratory() {
-  await mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/CCAPDEV");
+  mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/CCAPDEV");
 
   const db = mongoose.connection;
 
@@ -128,6 +127,3 @@ async function populateLaboratory() {
       mongoose.disconnect();
     }
   });
-}
-
-module.exports = populateLaboratory;
