@@ -8,7 +8,7 @@ const {
   userProfileModel,
 } = require("./models/laboratorySchema"); // Adjust the path as needed
 
-mongoose.connect("mongodb://localhost/CCAPDEV");
+mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/CCAPDEV");
 
 const db = mongoose.connection;
 
