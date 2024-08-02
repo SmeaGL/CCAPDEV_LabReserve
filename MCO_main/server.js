@@ -3,6 +3,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
+const mongoStore = require("connect-mongo");
 const { engine } = require("express-handlebars");
 
 const path = require("path");
@@ -62,6 +63,10 @@ app.use(
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
+    store: mongoStore.create({
+      mongoUrl: process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV",
+      collectionName: "sessions",
+    }),
   })
 );
 
