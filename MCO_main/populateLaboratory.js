@@ -9,7 +9,7 @@ const {
 } = require("./models/laboratorySchema"); // Adjust the path as needed
 
 async function populateLaboratory() {
-  mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/CCAPDEV");
+  await mongoose.connect(process.env.MONGODB_URI ||"mongodb://localhost/CCAPDEV");
 
   const db = mongoose.connection;
 

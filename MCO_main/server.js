@@ -7,15 +7,6 @@ const { engine } = require("express-handlebars");
 const path = require("path");
 const populateLaboratory = require("./populateLaboratory");
 
-// Import the models
-const {
-  DateModel,
-  LaboratoryNumber,
-  TimeSlot,
-  SeatStatus,
-  userProfileModel,
-} = require("./models/laboratorySchema");
-
 const routesRes = require("./routes/reserveSlotServer");
 const routesLog = require("./routes/loginServer");
 const routesEdit = require("./routes/editReservationServer");
@@ -67,9 +58,6 @@ app.use(
 
 // Configure cookie parser
 app.use(cookieParser());
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV");
 
 // Routes
 app.use("/api", routesRes);
@@ -219,6 +207,8 @@ app.get("/replaceBooking", isAuthenticated, (req, res) => {
 // Initialize database and start the server
 async function initialize() {
   try {
+    // MongoDB Connection
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV");
     await populateLaboratory(); // Ensure database is populated
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
