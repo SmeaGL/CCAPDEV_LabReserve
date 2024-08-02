@@ -143,10 +143,15 @@ app.get("/profile", isAuthenticated, async (req, res) => {
     const currentUserEmail = req.session.user.email; // Current logged-in user's email
 
     if (email) {
-      const response = await axios.get(
-        `http://localhost:3000/api/userProfileOther?email=${email}`
+      const response = await fetch(
+        `http://ccapdev-labreserve.onrender.com/api/userProfileOther?email=${email}`
       );
-      userData = response.data;
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile for email: ${email}`);
+      }
+
+      userData = await response.json();
     } else {
       userData = req.session.user;
     }
