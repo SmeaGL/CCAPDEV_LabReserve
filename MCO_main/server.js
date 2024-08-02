@@ -144,7 +144,6 @@ app.get("/profile", isAuthenticated, async (req, res) => {
 
     if (email) {
       const response = await fetch(
-        `http://ccapdev-labreserve.onrender.com/api/userProfileOther?email=${email}`||
         `http://localhost:3000/api/userProfileOther?email=${email}`
       );
 
