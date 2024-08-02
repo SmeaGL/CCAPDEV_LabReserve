@@ -14,8 +14,6 @@ const {
 } = require("../models/laboratorySchema");
 app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect("mongodb://localhost/CCAPDEV");
 
 router.get("/publicProfile", async (req, res) => {
   try {

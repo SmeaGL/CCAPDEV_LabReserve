@@ -4,7 +4,18 @@ const cookieParser = require("cookie-parser");
 const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
 const { engine } = require("express-handlebars");
+
 const path = require("path");
+
+// Import the models
+const {
+  DateModel,
+  LaboratoryNumber,
+  TimeSlot,
+  SeatStatus,
+  userProfileModel,
+} = require("./models/laboratorySchema");
+
 const routesRes = require("./routes/reserveSlotServer");
 const routesLog = require("./routes/loginServer");
 const routesEdit = require("./routes/editReservationServer");
@@ -58,10 +69,7 @@ app.use(
 app.use(cookieParser());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV");
 
 // Routes
 app.use("/api", routesRes);

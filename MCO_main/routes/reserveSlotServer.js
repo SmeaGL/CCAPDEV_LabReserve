@@ -17,9 +17,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect("mongodb://localhost/CCAPDEV");
-
 // GET /api/available-dates
 router.get("/available-dates", async (req, res) => {
   try {
