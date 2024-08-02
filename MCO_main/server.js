@@ -5,8 +5,8 @@ const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
 const mongoStore = require("connect-mongo");
 const { engine } = require("express-handlebars");
-
 const path = require("path");
+const populateLaboratory = require("./populateLaboratory");
 
 // Import the models
 const {
@@ -221,8 +221,18 @@ app.get("/replaceBooking", isAuthenticated, (req, res) => {
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Initialize database and start the server
+async function initialize() {
+  try {
+    await populateLaboratory(); // Ensure database is populated
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("Error during initialization:", err);
+    process.exit(1); // Exit the process with an error code
+  }
+}
+
+initialize();
