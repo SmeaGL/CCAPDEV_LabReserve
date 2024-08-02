@@ -5,7 +5,6 @@ const Handlebars = require("handlebars");
 const mongoose = require("mongoose");
 const { engine } = require("express-handlebars");
 const path = require("path");
-const populateLaboratory = require("./populateLaboratory");
 
 const routesRes = require("./routes/reserveSlotServer");
 const routesLog = require("./routes/loginServer");
@@ -204,12 +203,11 @@ app.get("/replaceBooking", isAuthenticated, (req, res) => {
   });
 });
 
-// Initialize database and start the server
+// Start the server
 async function initialize() {
   try {
     // MongoDB Connection
     mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/CCAPDEV");
-    await populateLaboratory(); // Ensure database is populated
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
