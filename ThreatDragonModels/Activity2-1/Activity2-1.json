@@ -141,7 +141,7 @@
                   "status": "Open",
                   "severity": "TBD",
                   "type": "Elevation of privilege",
-                  "description": "Provide a description for this threat",
+                  "description": "The browser client may be able to impersonate the context of the web application in order to gain additional privilege.\nAn attacker may pass data into the browser client in order to choose the flow of program execution within the browser client to the attacker's choosing.",
                   "mitigation": "Provide remediation for this threat or a reason if status is N/A",
                   "modelType": "STRIDE",
                   "new": false,
@@ -155,7 +155,7 @@
                 "repudiation": 0,
                 "informationDisclosure": 0,
                 "denialOfService": 0,
-                "elevationOfPrivilege": 1
+                "elevationOfPrivilege": 2
               }
             }
           },
@@ -670,7 +670,7 @@
                   "status": "Open",
                   "severity": "TBD",
                   "type": "Spoofing",
-                  "description": "Provide a description for this threat",
+                  "description": "The web application may be spoofed by an attacker and this may lead to unauthorized access to the browser client.",
                   "mitigation": "Provide remediation for this threat or a reason if status is N/A",
                   "modelType": "STRIDE",
                   "new": false,
@@ -679,7 +679,7 @@
                 }
               ],
               "threatFrequency": {
-                "spoofing": 1,
+                "spoofing": 3,
                 "tampering": 0,
                 "repudiation": 0,
                 "informationDisclosure": 0,
@@ -812,7 +812,7 @@
                   "status": "Open",
                   "severity": "TBD",
                   "type": "Spoofing",
-                  "description": "Provide a description for this threat",
+                  "description": "The web application may be spoofed by an attacker and this may lead to unauthorized access to the browser client.",
                   "mitigation": "Provide remediation for this threat or a reason if status is N/A",
                   "modelType": "STRIDE",
                   "new": false,
@@ -821,7 +821,7 @@
                 }
               ],
               "threatFrequency": {
-                "spoofing": 1,
+                "spoofing": 3,
                 "tampering": 0,
                 "repudiation": 0,
                 "informationDisclosure": 0,
@@ -1055,6 +1055,7 @@
             },
             "visible": true,
             "shape": "store",
+            "zIndex": 18,
             "ports": {
               "groups": {
                 "top": {
@@ -1138,7 +1139,6 @@
               ]
             },
             "id": "afbc1c3e-1f44-4f49-966d-ccdad1a60bcf",
-            "zIndex": 18,
             "data": {
               "type": "tm.Store",
               "name": "SQL Database",
@@ -1155,11 +1155,11 @@
               "threats": [
                 {
                   "id": "980b768d-cecf-4a2e-83d2-f3a35d561fb3",
-                  "title": "DB Info Leak",
+                  "title": "DB Injection Attack",
                   "status": "Open",
                   "severity": "TBD",
-                  "type": "Information disclosure",
-                  "description": "Provide a description for this threat",
+                  "type": "Tampering",
+                  "description": "SQL injection is an attack in which malicious code is inserted into strings that are later passed to an instance of SQL Server for parsing and execution.\n",
                   "mitigation": "Provide remediation for this threat or a reason if status is N/A",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1168,11 +1168,18 @@
                 }
               ],
               "threatFrequency": {
-                "tampering": 0,
+                "tampering": 2,
                 "repudiation": 0,
                 "informationDisclosure": 1,
                 "denialOfService": 0
               }
+            },
+            "tools": {
+              "items": [
+                "boundary",
+                "button-remove"
+              ],
+              "name": null
             }
           },
           {
@@ -1201,6 +1208,7 @@
             },
             "visible": true,
             "shape": "store",
+            "zIndex": 19,
             "ports": {
               "groups": {
                 "top": {
@@ -1284,7 +1292,6 @@
               ]
             },
             "id": "a04697fa-2804-4749-a266-6a3278f80a40",
-            "zIndex": 19,
             "data": {
               "type": "tm.Store",
               "name": "LDAP",
@@ -1305,7 +1312,7 @@
                   "status": "Open",
                   "severity": "TBD",
                   "type": "Tampering",
-                  "description": "Provide a description for this threat",
+                  "description": "LDAP injection is possible, as the user authentication is verified using an LDAP query.\nData flowing across saved feedback comments may be tampered with by an attacker. Failure to verify that input is as expected is a root cause of a fairly large number of exploitable issues. Consider all paths and the way they handle data. Verify that all input is verified for correctness using an approved-list input validation approach.",
                   "mitigation": "Provide remediation for this threat or a reason if status is N/A",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1314,7 +1321,7 @@
                 }
               ],
               "threatFrequency": {
-                "tampering": 1,
+                "tampering": 2,
                 "repudiation": 0,
                 "informationDisclosure": 0,
                 "denialOfService": 0
